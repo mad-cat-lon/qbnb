@@ -1,5 +1,7 @@
+#Base class for reviews.
 from flask import Flask
 from flask_mongoengine import MongoEngine
+
 
 app = Flask(__name__)
 
@@ -12,6 +14,15 @@ db = MongoEngine(app)
 
 
 class Review(db.Document):
+    """
+    Base Review Class
+    username: Name of user giving the review
+    listing: Name of the property being reviewed
+    comment: Review comment
+    ratiing: Numerical rating
+    date: Time of review
+    id: Review id
+    """
     username = db.StringField(required=True)
     listing = db.StringField(required=True)
     comment = db.StringField(max_length=1000, required=True)
