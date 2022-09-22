@@ -1,4 +1,4 @@
-#Base class for reviews.
+# Base class for reviews.
 from flask import Flask
 from flask_mongoengine import MongoEngine
 
