@@ -30,4 +30,4 @@ class User(db.Document):
     balance = db.FloatField(required=True)
     
     def __repr__(self):
-        return f"username: (self.username) email: {self.email}"
+        return f"username: {self.username} email: {self.email}"
