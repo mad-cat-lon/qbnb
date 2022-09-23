@@ -2,12 +2,13 @@ import json
 from operator import truediv
 from mongoengine import *
 from flask_mongoengine import BaseQuerySet
-'''
+
+"""
 Base Booking class
 guest: User associated with the booking
 booking_start: Start of booking period
 booking_end: End of booking period
-'''
+"""
 
 
 class Booking(Document):

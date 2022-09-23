@@ -4,7 +4,7 @@ from flask_mongoengine import BaseQuerySet
 from mongoengine import *
 from Booking import Booking
 
-'''
+"""
 Base Listing class
 name: Name of the listing
 images: Array of embedded images
@@ -16,7 +16,7 @@ booked: Boolean value representing if the listing
 requested_bookings: Array of requested Booking
         objects
 current_booking: the current booking
-'''
+"""
 
 
 class Listing(Document):
