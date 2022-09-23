@@ -21,14 +21,12 @@ class Review(db.Document):
     comment: Review comment
     ratiing: Numerical rating
     date: Time of review
-    id: Review id
     """
     username = db.StringField(required=True)
     listing = db.StringField(required=True)
     comment = db.StringField(max_length=1000, required=True)
     rating = db.IntField(default=0, max_value=5, min_value=0, required=True)
     date = db.IntField(required=True)
-    id = db.IntField(required=True)
 
     def __repr__(self):
         return f'Review(User={self.username}, Listing={self.listing})'
