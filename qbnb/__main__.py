@@ -20,7 +20,7 @@ db = MongoEngine(app)
 # Route to retrieve all listings
 @app.route("/listings")
 def get_listings():
-    listings = Listing.objects() 
+    listings = Listing.objects()
     return jsonify(listings), 200
 
 
@@ -28,7 +28,7 @@ def get_listings():
 @app.route("/listings/", methods=["POST"])
 def create_listing():
     body = request.get_json()
-    listing = Listing(**body).save() 
+    listing = Listing(**body)
     return jsonify(listing), 200
 
 
