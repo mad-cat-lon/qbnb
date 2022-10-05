@@ -3,18 +3,18 @@ from mongoengine import *
 
 """
 Base Booking class
-guest: User associated with the booking
-booking_start: Start of booking period
-booking_end: End of booking period
+user_id: id of the user booking the place
+listing_id: id of the listing being booked
+price: Price of listing
+date: Date of the booking
 """
 
 
 class Booking(Document):
-    # guest = ReferenceField(User)
-    # Host must confirm booking before it is registered
-    confirmed = BooleanField(default=False)
-    booking_start = StringField(required=True)
-    booking_end = StringField(required=True)
+    user_id = IntField(required=True)
+    listing_id = IntField(required=True)
+    price = FloatField(required=True)
+    date = IntField(required=True)
     meta = {"queryset_class": BaseQuerySet}
 
     # String representation of booking
@@ -23,18 +23,23 @@ class Booking(Document):
             booking_end: {self.booking_end}"
 
 
-"""Base User class (data model)
-id: Identification number associated with user profile
-username: Username of user
-email: Email associated with user
-balance: Money in user's account
+"""
+Base User class (data model)
+email: Email of the user
+password: Password of the user
+user_name: Name of the user
+billing_address: Billing address of the user
+postal_code: Postal code of user
+balance: Account balance of the user
 """
 
 
 class User(Document):
-    id = IntField(required=True)
-    username = StringField(required=True)
-    email = StringField(required=True)
+    email = EmailField(required=True)
+    password = StringField(required=True)
+    user_name = StringField(required=True)
+    billing_address = StringField()
+    postal_code = StringField()
     balance = FloatField(required=True)
 
     def __init__(self, id, username, email, balance):
@@ -77,31 +82,40 @@ class Transaction(Document):
 
 """
 Base Listing class
-name: Name of the listing
-images: Array of embedded images
-price: Price of the listing
-host: User object representing the host
-reviews: Array of Review objects
-booked: Boolean value representing if the listing
-        is booked
-requested_bookings: Array of requested Booking
-        objects
-current_booking: the current booking
+title: Name of listing
+description: Description of listing
+price: Price of Listing
+owner_id: id of the owner
 """
 
 
 class Listing(Document):
-    name = StringField(required=True)
-    # images = EmbeddedDocumentListField()
-    price = FloatField(required=True)
-    # host = ReferenceField(User)
-    # reviews = ListField(ReferenceField(Review))
+    title = StringField(required=True)
     description = StringField(required=True)
-    booked = BooleanField(default=False)
-    requested_bookings = ListField(ReferenceField(Booking))
-    current_booking = ReferenceField(Booking)
+    price = FloatField(required=True)
+    last_modified_date = IntField(required=True)
+    owner_id = IntField(required=True)
     meta = {"queryset_class": BaseQuerySet}
 
     # String representation of Listing
     def __repr__(self):
         return f"name: {self.name} price: {self.price}"
+
+
+"""
+Base Listing class
+user_id: id of the user who gave the review
+listing_id: id of the listing being reviewed
+review_text: Content of review
+date: Date of the review
+"""
+
+
+class Review(Document):
+    user_id = IntField(required=True)
+    listing_id = IntField(required=True)
+    review_text = StringField(required=True)
+    date = IntField(required=True)
+
+    def __repr__(self):
+        return f"user: {self.user_id} reviewed listing: {self.listing_id}"
