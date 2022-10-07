@@ -2,20 +2,8 @@ import json
 from flask import Flask
 from flask import request, jsonify
 from flask_mongoengine import MongoEngine
-from Listing import Listing
-from Booking import Booking
-"""
-Main flask server
-"""
-app = Flask(__name__)
-app.config["MONGODB_SETTINGS"] = {
-    "db": "qbnb",
-    "host": "localhost",
-    "port": 27017
-}
-app.config["SECRET_KEY"] = "SECRET_KEY"
-db = MongoEngine(app)
-
+from qbnb import app
+from qbnb.models import user_register
 
 # Route to retrieve all listings
 @app.route("/listings")
