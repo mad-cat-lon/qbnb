@@ -68,38 +68,37 @@ def user_register(_email, _password, _user_name, _balance = 100):
     regex_spaces = r"^\S$|^\S[ \S]*\S$"
     regex_alphanumeric = r"^[a-zA-Z0-9 ]*$"
     if _email == '' or _password == '':
-        raise ValidationError("Password or Email field is empty")
+        return False
 
     if not (re.fullmatch(regex_email_5322, _email)):
-        raise ValidationError("Email must match RFC 5322 format")
+        return False
 
-    # Password doesn't meet required length
     if (len(_password) < 6):
         return False
 
     if (_password.lower() == _password):
-        raise ValidationError("Password doesn't contain at least one uppercase")
+        return False
     
     if (_password.upper() == _password):
-        raise ValidationError("Password doesn't contain at least one lowercase")
+        return False
 
     if not special_characters.intersection(_password):
-        raise ValidationError("Password doesn't contain any special characters")
+        return False
 
     if _user_name == '':
-        raise ValidationError("Username field is empty")
+        return False
     
     if not (re.fullmatch(regex_alphanumeric, _user_name)):
-        raise ValidationError("Username is not alphanumeric")
+        return False
     
     if not (re.fullmatch(regex_spaces, _user_name)):
-        raise ValidationError("Username begins or ends with a blank space")
+        return False
 
     if not len(_user_name) > 2 or not len(_user_name) < 20:
-        raise ValidationError("Username does not meet length requirements")
+        return False
 
     if (User.objects(email=_email)):
-        raise ValidationError("User with this email already exists")
+        return False
     
     user = User(email = _email, password = _password, user_name = _user_name,
                 billing_address = '', postal_code = '', balance = _balance)
