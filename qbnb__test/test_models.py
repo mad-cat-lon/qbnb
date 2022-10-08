@@ -16,7 +16,8 @@ def test_r2_1_login():
 
     """
     user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', balance=100)
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     user = login('test0@test.com', 'A123456a')
     dne_user = login('test@test.com', '123456Aa')
@@ -32,13 +33,14 @@ def test_r2_2_login():
     supplied inputs meet the same email/ password requirements
     as above, before checking the database. 
     """
-    user = User(email='test0@test.com', password='123456a',
-                user_name='u0', balance=100)
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     user = login('test0@test.com', '123456a')
     # if login does not check before the search, it would return True
     assert user is False
-    User.objects(email='test0@test.com', password='123456a').delete()
+    User.objects(email='test0@test.com', password='A123456a').delete()
 
 
 def test_r3_1_update_user():
@@ -46,8 +48,9 @@ def test_r3_1_update_user():
     Testing for R3-1:TA user is only able to update his/her 
     user name, user email, billing address, and postal code.
     """
-    user = User(email='test0@test.com', password='123456aA',
-                user_name='u0', balance=100)
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     result = update_user('test0@test.com', 'newname', 'newemail@test.com',
                          'address', 'C1A 5A4')
@@ -58,7 +61,7 @@ def test_r3_1_update_user():
     assert user.user_name == 'newname'
     assert user.billing_address == 'address'
     assert user.postal_code == 'C1A 5A4'
-    assert user.password == '123456aA'
+    assert user.password == 'A123456a'
     assert user.balance == 100
     user.delete()
 
@@ -68,8 +71,9 @@ def test_r3_2_update_user():
     Testing for R3-2: postal code should be non-empty,
     alphanumeric-only, and no special characters such as !.
     """
-    user = User(email='test0@test.com', password='123456aA',
-                user_name='u0', balance=100)
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     user = User.objects(email='test0@test.com')
     result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
@@ -87,8 +91,9 @@ def test_r3_3_update_user():
     """
     Test for R3-3: Postal code has to be a valid Canadian postal code.
     """
-    user = User(email='test0@test.com', password='123456aA',
-                user_name='u0', balance=100)
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     user = User.objects(email='test0@test.com')
     result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
@@ -104,8 +109,9 @@ def test_r3_4_update_user():
     """
     Test for user name following the guideline
     """
-    user = User(email='test0@test.com', password='123456aA',
-                user_name='u0', balance=100)
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
     user.save()
     user = User.objects(email='test0@test.com')
     result = update_user('test0@test.com', 'test User1', None, None, None)
