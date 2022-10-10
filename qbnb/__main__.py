@@ -41,7 +41,9 @@ def request_booking(id):
 
 
 # Route to confirm a requested booking for a listing
-@app.route("/listings/<listing_id>/confirm_booking/<booking_id>", methods=["GET"])
+@app.route(
+    "/listings/<listing_id>/confirm_booking/<booking_id>",
+    methods=["GET"])
 def confirm_booking(listing_id, booking_id):
     listing = Listing.objects.get_or_404(id=listing_id)
     booking = Booking.objects.get_or_404(id=booking_id)
