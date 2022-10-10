@@ -1,20 +1,9 @@
 import json
 from flask import Flask
 from flask import request, jsonify
-from flask_mongoengine import MongoEngine
-from Listing import Listing
-from Booking import Booking
-"""
-Main flask server
-"""
-app = Flask(__name__)
-app.config["MONGODB_SETTINGS"] = {
-    "db": "qbnb",
-    "host": "localhost",
-    "port": 27017
-}
-app.config["SECRET_KEY"] = "SECRET_KEY"
-db = MongoEngine(app)
+from mongoengine import ValidationError
+from qbnb import app
+from qbnb.models import Listing
 
 
 # Route to retrieve all listings
@@ -29,7 +18,13 @@ def get_listings():
 def create_listing():
     body = request.get_json()
     listing = Listing(**body)
-    return jsonify(listing), 200
+    try:
+        listing.check()
+        listing.save()
+        return jsonify(listing), 200
+    except ValidationError as e:
+        print(e.message)
+        return jsonify(listing), 500
 
 
 # Route to request a booking for a listing 
