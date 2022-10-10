@@ -2,6 +2,7 @@ from qbnb.models import *
 import requests
 from mongoengine import *
 
+
 def test_r4_1_listing_create():
     '''
     Testing R4-1 in listing creation
@@ -20,7 +21,7 @@ def test_r4_1_listing_create():
         "ABCD 123": True,
         "ABCD  123": True,
         "ABCD123": True
-        }
+    }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
         owner = User(
@@ -49,13 +50,14 @@ def test_r4_1_listing_create():
         elif req.status_code == 200:
             assert value is True
 
+
 def test_r4_2_listing_create():
     '''
     Testing R4-2 in listing creation
     Requirement: the title of the listing can be no longer than 80 characters
     '''
     test_cases = {
-        "A"*81: False,
+        "A" * 81: False,
         "AAAAAAAA": True
     }
     url = "http://127.0.0.1:5000/listings/"
@@ -64,7 +66,8 @@ def test_r4_2_listing_create():
             id=1,
             username="abcd123",
             email="abcd@email.com",
-            balance=100.0)
+            balance=100.0
+        )
         owner.save()
         body = {
             "name": key,
@@ -94,8 +97,8 @@ def test_r4_3_listing_create():
     test_cases = {
         "": False,
         "ABCD123": False,
-        "*"*2001: False,
-        "*"*1999: True
+        "*" * 2001: False,
+        "*" * 1999: True
         }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
@@ -103,7 +106,8 @@ def test_r4_3_listing_create():
             id=1,
             username="abcd123",
             email="abcd@email.com",
-            balance=100.0)
+            balance=100.0
+        )
         owner.save()
         body = {
             "name": "ABCD 123",
@@ -135,12 +139,12 @@ def test_r4_4_listing_create():
     }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
-        #print(key, value)
         owner = User(
             id=1,
             username="abcd123",
             email="abcd@email.com",
-            balance=100.0)
+            balance=100.0
+        )
         owner.save()
         description = key[0]
         name = key[1]
@@ -178,7 +182,8 @@ def test_r4_5_listing_create():
             id=1,
             username="abcd123",
             email="abcd@email.com",
-            balance=100.0)
+            balance=100.0
+        )
         owner.save()
         body = {
             "name": "ABCD 123",
@@ -207,14 +212,16 @@ def test_r4_6_listing_create():
     '''
     test_cases = {
         "1970-01-01": False, "2025-01-03": False,
-        "2021-01-02": True, "2022-01-01": True}
+        "2021-01-02": True, "2022-01-01": True
+    }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
         owner = User(
             id=1,
             username="abcd123",
             email="abcd@email.com",
-            balance=100.0)
+            balance=100.0
+        )
         owner.save()
         body = {
             "name": "ABCD 123",
@@ -234,6 +241,7 @@ def test_r4_6_listing_create():
         elif req.status_code == 200:
             assert value is True
 
+
 def test_r4_7_listing_create():
     '''
     Testing R4-7 in listing creation
@@ -242,17 +250,18 @@ def test_r4_7_listing_create():
     url = "http://127.0.0.1:5000/listings/"
     # Test case 1
     owner = User(
-            id=1,
-            username="abcd123",
-            email="abcd@email.com",
-            balance=100.0)
+        id=1,
+        username="abcd123",
+        email="abcd@email.com",
+        balance=100.0
+    )
     owner.save()
     body = {
-            "name": "ABCD 123",
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
+        "name": "ABCD 123",
+        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "price": 100,
+        "last_modified_date": "2022-03-09",
+        "owner": owner.id
     }
     req = requests.post(url, json=body)
     assert req.status_code == 200
@@ -274,18 +283,19 @@ def test_r4_8_listing_create():
     '''
     url = "http://127.0.0.1:5000/listings/"
     owner = User(
-                id=1,
-                username="abcd123",
-                email="abcd@email.com",
-                balance=100.0)
+        id=1,
+        username="abcd123",
+        email="abcd@email.com",
+        balance=100.0
+    )
     owner.save()
     # Test case 1
     body = {
-            "name": "ABCD 123",
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
+        "name": "ABCD 123",
+        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "price": 100,
+        "last_modified_date": "2022-03-09",
+        "owner": owner.id
     }
     req = requests.post(url, json=body)
     assert req.status_code == 200
@@ -294,11 +304,11 @@ def test_r4_8_listing_create():
     assert req.status_code == 500
     # Test case 3
     body = {
-            "name": "ABCD123",
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
+        "name": "ABCD123",
+        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "price": 100,
+        "last_modified_date": "2022-03-09",
+        "owner": owner.id
     }
     req = requests.post(url, json=body)
     assert req.status_code == 200
