@@ -99,7 +99,7 @@ def test_r4_3_listing_create():
         "ABCD123": False,
         "*" * 2001: False,
         "*" * 1999: True
-        }
+    }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
         owner = User(
@@ -134,8 +134,8 @@ def test_r4_4_listing_create():
     Requirement: the description has to be longer than the product's title
     '''
     test_cases = {
-        ("A"*20, "ABCD 123"): True,
-        ("A"*20, "A"*21): False
+        ("A" * 20, "ABCD 123"): True,
+        ("A" * 20, "A" * 21): False
     }
     url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
