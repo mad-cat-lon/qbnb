@@ -1,4 +1,6 @@
+from venv import create
 from qbnb.models import *
+from qbnb.functions import *
 import requests
 from mongoengine import *
 
@@ -22,8 +24,8 @@ def test_r4_1_listing_create():
         "ABCD  123": True,
         "ABCD123": True
     }
-    url = "http://127.0.0.1:5000/listings/"
-    for key, value in test_cases.items():
+    for key, value in test_cases.items(): 
+        print(key, value)
         owner = User(
             id=1,
             username="abcd123",
@@ -31,25 +33,22 @@ def test_r4_1_listing_create():
             balance=100.0
         )
         owner.save()
-        body = {
-            "name": key,
-            "description": "R4-1: ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
-        owner = User.objects(username="abcd123")
-        owner.delete()
+        ret = create_listing(
+            name=key,
+            price=100,
+            owner=owner,
+            description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            last_modified_date="2022-03-09"
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
         listing = Listing.objects(name=key)
         listing.delete()
-        print(key, value)
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
-
+        owner = User.objects(username="abcd123")
+        owner.delete()
 
 def test_r4_2_listing_create():
     '''
@@ -60,8 +59,7 @@ def test_r4_2_listing_create():
         "A" * 81: False,
         "AAAAAAAA": True
     }
-    url = "http://127.0.0.1:5000/listings/"
-    for key, value in test_cases.items():
+    for key, value in test_cases.items(): 
         owner = User(
             id=1,
             username="abcd123",
@@ -69,24 +67,22 @@ def test_r4_2_listing_create():
             balance=100.0
         )
         owner.save()
-        body = {
-            "name": key,
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
-        owner = User.objects(username="abcd123")
-        owner.delete()
+        ret = create_listing(
+            name=key,
+            price=100,
+            owner=owner,
+            description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            last_modified_date="2022-03-09"
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
         listing = Listing.objects(name=key)
         listing.delete()
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
-        
+        owner = User.objects(username="abcd123")
+        owner.delete()
 
 def test_r4_3_listing_create():
     '''
@@ -100,8 +96,7 @@ def test_r4_3_listing_create():
         "*" * 2001: False,
         "*" * 1999: True
     }
-    url = "http://127.0.0.1:5000/listings/"
-    for key, value in test_cases.items():
+    for key, value in test_cases.items(): 
         owner = User(
             id=1,
             username="abcd123",
@@ -109,24 +104,22 @@ def test_r4_3_listing_create():
             balance=100.0
         )
         owner.save()
-        body = {
-            "name": "ABCD 123",
-            "description": key,
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
+        ret = create_listing(
+            name="ABCD 123",
+            price=100.0,
+            owner=owner,
+            description=key,
+            last_modified_date="2022-03-09"
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
+        listing = Listing.objects(description=key)
+        listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
-        listing = Listing.objects(name="ABCD 123")
-        listing.delete()
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
-
 
 def test_r4_4_listing_create():
     '''
@@ -137,8 +130,9 @@ def test_r4_4_listing_create():
         ("A" * 20, "ABCD 123"): True,
         ("A" * 20, "A" * 21): False
     }
-    url = "http://127.0.0.1:5000/listings/"
     for key, value in test_cases.items():
+        name = key[1]
+        description = key[0]
         owner = User(
             id=1,
             username="abcd123",
@@ -146,26 +140,22 @@ def test_r4_4_listing_create():
             balance=100.0
         )
         owner.save()
-        description = key[0]
-        name = key[1]
-        body = {
-            "name": name,
-            "description": description,
-            "price": 100,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
+        ret = create_listing(
+            name=name,
+            price=100.0,
+            owner=owner,
+            description=description,
+            last_modified_date="2022-03-09"
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
+        listing = Listing.objects(name=key)
+        listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
-        listing = Listing.objects(name=name)
-        listing.delete()
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
-
 
 def test_r4_5_listing_create():
     '''
@@ -176,8 +166,7 @@ def test_r4_5_listing_create():
         0: False, 9.999: False, 10000.1: False,
         10: True, 99: True, 10000: True
     }
-    url = "http://127.0.0.1:5000/listings/"
-    for key, value in test_cases.items():
+    for key, value in test_cases.items(): 
         owner = User(
             id=1,
             username="abcd123",
@@ -185,24 +174,22 @@ def test_r4_5_listing_create():
             balance=100.0
         )
         owner.save()
-        body = {
-            "name": "ABCD 123",
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": key,
-            "last_modified_date": "2022-03-09",
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
-        owner = User.objects(username="abcd123")
-        owner.delete()
+        ret = create_listing(
+            name="ABCD 123",
+            price=key,
+            owner=owner,
+            description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            last_modified_date="2022-03-09"
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
         listing = Listing.objects(name="ABCD 123")
         listing.delete()
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
-
+        owner = User.objects(username="abcd123")
+        owner.delete()
 
 def test_r4_6_listing_create():
     '''
@@ -214,8 +201,7 @@ def test_r4_6_listing_create():
         "1970-01-01": False, "2025-01-03": False,
         "2021-01-02": True, "2022-01-01": True
     }
-    url = "http://127.0.0.1:5000/listings/"
-    for key, value in test_cases.items():
+    for key, value in test_cases.items(): 
         owner = User(
             id=1,
             username="abcd123",
@@ -223,23 +209,22 @@ def test_r4_6_listing_create():
             balance=100.0
         )
         owner.save()
-        body = {
-            "name": "ABCD 123",
-            "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "price": 100,
-            "last_modified_date": key,
-            "owner": owner.id
-        }
-        req = requests.post(url, json=body)
-        # Delete objects we created
-        owner = User.objects(username="abcd123")
-        owner.delete()
+        ret = create_listing(
+            name="ABCD 123",
+            price=100.0,
+            owner=owner,
+            description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            last_modified_date=key
+        )
+        if value == True:
+            assert ret is True
+        if value == False:
+            assert ret is False
+        # Delete our objects
         listing = Listing.objects(name="ABCD 123")
         listing.delete()
-        if req.status_code == 500:
-            assert value is False
-        elif req.status_code == 200:
-            assert value is True
+        owner = User.objects(username="abcd123")
+        owner.delete()
 
 
 def test_r4_7_listing_create():
@@ -247,7 +232,6 @@ def test_r4_7_listing_create():
     Testing R4-7 in listing creation
     Requirement: owner of the created listing must exist
     '''
-    url = "http://127.0.0.1:5000/listings/"
     # Test case 1
     owner = User(
         id=1,
@@ -255,25 +239,18 @@ def test_r4_7_listing_create():
         email="abcd@email.com",
         balance=100.0
     )
+    old_id = owner.id
     owner.save()
-    body = {
-        "name": "ABCD 123",
-        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "price": 100,
-        "last_modified_date": "2022-03-09",
-        "owner": owner.id
-    }
-    req = requests.post(url, json=body)
-    assert req.status_code == 200
-    owner = User.objects(username="abcd123")
-    owner.delete()
+    ret = create_listing(
+        name="ABCD 123",
+        price=100.0,
+        owner=owner,
+        description="ABCDEFGHIJKLMNOPQRSTUVQWXYZ",
+        last_modified_date="2022-03-09"
+    )
+    assert ret is True 
     listing = Listing.objects(name="ABCD 123")
     listing.delete()
-    # Test case 2
-    req = requests.post(url, json=body)
-    listing = Listing.objects(name="ABCD 123")
-    listing.delete()
-    assert req.status_code == 500
     
 
 def test_r4_8_listing_create():
@@ -281,7 +258,6 @@ def test_r4_8_listing_create():
     Testing R4-8 in listing creation
     Requirement: users cannot create products that have the same title
     '''
-    url = "http://127.0.0.1:5000/listings/"
     owner = User(
         id=1,
         username="abcd123",
@@ -290,28 +266,32 @@ def test_r4_8_listing_create():
     )
     owner.save()
     # Test case 1
-    body = {
-        "name": "ABCD 123",
-        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "price": 100,
-        "last_modified_date": "2022-03-09",
-        "owner": owner.id
-    }
-    req = requests.post(url, json=body)
-    assert req.status_code == 200
+    ret = create_listing(
+        name="ABCD 123",
+        price=100.0,
+        owner=owner,
+        description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        last_modified_date="2022-03-09"
+    )
+    assert ret is True
     # Test case 2
-    req = requests.post(url, json=body)
-    assert req.status_code == 500
+    ret = create_listing(
+        name="ABCD 123",
+        price=100.0,
+        owner=owner.id,
+        description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        last_modified_date="2022-03-09"
+    )
+    assert ret is False
     # Test case 3
-    body = {
-        "name": "ABCD123",
-        "description": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "price": 100,
-        "last_modified_date": "2022-03-09",
-        "owner": owner.id
-    }
-    req = requests.post(url, json=body)
-    assert req.status_code == 200
+    ret = create_listing(
+        name="ABCD123",
+        price=100.0,
+        owner=owner,
+        description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        last_modified_date="2022-03-09"
+    )
+    assert ret is True
     # Delete all objects after we are done
     listing = Listing.objects(name="ABCD 123")
     listing.delete()
@@ -319,3 +299,4 @@ def test_r4_8_listing_create():
     listing.delete()
     owner = User.objects(username="abcd123")
     owner.delete()
+
