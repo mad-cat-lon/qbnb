@@ -21,7 +21,8 @@ def test_r1_2_user_register():
     user id - automatically generated.
     '''
     user = user_register("user111S@gmail.com", "Password1!", "user1")
-    # Get id is not done || Commenting out for now so I have build passing stored on branch.
+    # Get id is not done || Commenting out for now so I have build passing 
+    # stored on branch.
     # assert user.get('_id') is not None
     user.delete()
 
@@ -86,8 +87,10 @@ def test_r1_6_user_register():
     '''
     user0 = user_register("user140@email.com", "Password1!", "user0")
     user1 = user_register("user1124@gmail.com", "Password1!", "u")
-    user2 = user_register("user2142@email.com", "Password1!",
-                         "usernamedextendedtwo2")
+    user2 = user_register(
+        "u2142@email.com",
+        "Password1!", 
+        "usernamedextendedtwo2")
 
     assert user0 is not None
     assert user1 is None

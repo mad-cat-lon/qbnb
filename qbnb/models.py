@@ -109,7 +109,6 @@ def user_register(_email, _password, _user_name, _balance=100):
     return user
 
 
-
 """
 Description for each field:
 reference: call base user class for user info
