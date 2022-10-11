@@ -40,15 +40,16 @@ def test_r4_1_listing_create():
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             last_modified_date="2022-03-09"
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(name=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
+
 
 def test_r4_2_listing_create():
     '''
@@ -74,15 +75,16 @@ def test_r4_2_listing_create():
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             last_modified_date="2022-03-09"
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(name=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
+
 
 def test_r4_3_listing_create():
     '''
@@ -111,15 +113,16 @@ def test_r4_3_listing_create():
             description=key,
             last_modified_date="2022-03-09"
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(description=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
+
 
 def test_r4_4_listing_create():
     '''
@@ -147,15 +150,16 @@ def test_r4_4_listing_create():
             description=description,
             last_modified_date="2022-03-09"
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(name=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
+
 
 def test_r4_5_listing_create():
     '''
@@ -181,15 +185,16 @@ def test_r4_5_listing_create():
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             last_modified_date="2022-03-09"
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(name="ABCD 123")
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
+
 
 def test_r4_6_listing_create():
     '''
@@ -216,9 +221,9 @@ def test_r4_6_listing_create():
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             last_modified_date=key
         )
-        if value == True:
+        if value is True:
             assert ret is True
-        if value == False:
+        if value is False:
             assert ret is False
         # Delete our objects
         listing = Listing.objects(name="ABCD 123")
@@ -239,7 +244,6 @@ def test_r4_7_listing_create():
         email="abcd@email.com",
         balance=100.0
     )
-    old_id = owner.id
     owner.save()
     ret = create_listing(
         name="ABCD 123",
