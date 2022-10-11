@@ -16,13 +16,15 @@ def test_r5_1_update_listing():
     """
     listing = Listing(
         title='Beverly Hills Inn', description='Luxury suite with sea view, \
-            king bed, spa included.', price=2000, last_modified_date=20220928)
+            king bed, spa included.', price=2000, last_modified_date=20220928,
+              owner_id=1234)
     listing.save()
-    result = update_listing('Beverly Hills Mansion', 'Luxury suite with\
-         sea view, king bed, spa included.', 2000, 2000, 20220928)
-    listing = Listing.objects(title='Beverly Hills Inn')
-    listing = listing[0]
+    result = update_listing('Beverly Hills Inn', 'Beverly Hills Mansion',
+                            'Luxury suite with sea view, king bed, spa\
+                                 included.', 2000, 2000, 20220928)
+    listing = Listing.objects(title='Beverly Hills Mansion')
     assert result is not False
+    listing = listing[0]
     assert listing.price == 2000
     assert listing.title == 'Beverly Hills Mansion'
     assert listing.description == 'Luxury suite with sea view, \

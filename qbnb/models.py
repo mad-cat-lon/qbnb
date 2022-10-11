@@ -126,7 +126,8 @@ class Review(db.Document):
         return f"user: {self.user_id} reviewed listing: {self.listing_id}"
 
 
-def update_listing(title, description, price, new_price, last_modified_date):
+def update_listing(title, new_title, description, price, new_price,
+                   last_modified_date):
     """
     --Description--
     Function for updating all attributes of a listing, except owner_id and
@@ -134,6 +135,7 @@ def update_listing(title, description, price, new_price, last_modified_date):
 
     --Parameters--
     title: string, name of listing to be updated.
+    new_title: string, updated name of listing.
     description: string, description of listing to be updated.
     price: float, price of listing to be updated, can only be increased.
     new_price: float, new price, can be None.
@@ -141,27 +143,27 @@ def update_listing(title, description, price, new_price, last_modified_date):
     updated once operation is successful.
 
     """
-    listing = Listing.objects(price=new_price)
+    listing = Listing.objects(title=title)
     if len(listing) != 1:
         return False
     else:
         listing = listing[0]
-
-    if title is not None:
-        if len(title) > 80:
+    
+    if new_title is not None:
+        if len(new_title) > 80:
             return False
-        if title[0] == ' ' or title[-1] == ' ':
+        if new_title[0] == ' ' or new_title[-1] == ' ':
             return False
-        for i in title:
+        for i in new_title:
             if not (i.isalnum() or i == ' '):
                 return False
-        listing.update(title=title)
+        listing.update(new_title=new_title)
         listing.reload()
 
     if description is not None:
         if len(description) < 20 or len(description) > 2000:
             return False
-        if len(description) <= len(title):
+        if len(description) <= len(new_title):
             return False
         listing.update(description=description)
         listing.reload()
@@ -178,9 +180,10 @@ def update_listing(title, description, price, new_price, last_modified_date):
         if int(last_modified_date) < 20210102 or\
                 int(last_modified_date) > 20250102:
             return False
-
+    
+    """
     if update_listing(
             title, description, price, new_price, last_modified_date) is True:
         listing.update(last_modified_date=last_modified_date)
-
+    """
     return True
