@@ -21,9 +21,8 @@ def test_r1_2_user_register():
     user id - automatically generated.
     '''
     user = user_register("user111S@gmail.com", "Password1!", "user1")
-    
+
     assert user.id is not None
-    # assert user.get('_id') is not None
     user.delete()
 
 
