@@ -65,6 +65,8 @@ After this no it returns to normal
 
 
 def user_register(_email, _password, _user_name, _balance=100):
+    # Regex predefined for email format, spaces at start and end,
+    # as well as an alphanumeric string
     special_characters = set('`~!@#$%^&*()_-=+\{\}\\|;:\'\",./?')
     regex_email_5322 = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
     regex_spaces = r"^\S$|^\S[ \S]*\S$"
