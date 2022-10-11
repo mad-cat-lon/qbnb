@@ -3,6 +3,7 @@ from qbnb.models import *
 from mongoengine import *
 db = MongoEngine(app)
 
+
 def create_listing(title, price, owner, description, last_modified_date):
     '''
     Takes in name, price, owner, description and last_modified_date as
