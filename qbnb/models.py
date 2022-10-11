@@ -193,7 +193,7 @@ def update_user(org_email, user_name, new_email,
         user.reload()
 
     if postal_code is not None:
-        postal_reg= r'[A-Z]{1}[0-9]{1}[A-Z]{1}\s{1}[0-9]{1}[A-Z]{1}[0-9]{1}'
+        postal_reg = r'[A-Z]{1}[0-9]{1}[A-Z]{1}\s{1}[0-9]{1}[A-Z]{1}[0-9]{1}'
         postal_code = postal_code.upper()
         if len(postal_code) != 7:
             return False
