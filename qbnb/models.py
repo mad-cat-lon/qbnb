@@ -84,7 +84,7 @@ class Transaction(Document):
 
 """
 Base Listing class
-name: Name of the listing
+title: Name of the listing
 images: Array of embedded images
 price: Price of the listing
 host: User object representing the host
@@ -98,7 +98,7 @@ current_booking: the current booking
 
 
 class Listing(db.Document):
-    name = StringField()
+    title = StringField()
     # images = EmbeddedDocumentListField()
     price = FloatField()
     owner = ReferenceField(User)
@@ -116,14 +116,14 @@ class Listing(db.Document):
         and raises a ValidationError if it does not
         '''
         # R4-1
-        valid_name_regex = "^[1-9A-Za-z][1-9A-Za-z ]*[1-9A-Za-z]$"
-        if re.search(valid_name_regex, self.name) is None:
+        valid_title_regex = "^[1-9A-Za-z][1-9A-Za-z ]*[1-9A-Za-z]$"
+        if re.search(valid_title_regex, self.title) is None:
             raise ValidationError(
                 "Name of listing can only contain"
                 "alphanumeric characters and spaces")
                              
         # R4-2
-        if len(self.name) > 80:
+        if len(self.title) > 80:
             raise ValidationError("Name of listing is too long")
 
         # R4-3
@@ -133,7 +133,7 @@ class Listing(db.Document):
                 "2000 characters")
 
         # R4-4
-        if len(self.description) < len(self.name):
+        if len(self.description) < len(self.title):
             raise ValidationError("Description must be longer than title")
        
         # R4-5
@@ -152,11 +152,11 @@ class Listing(db.Document):
             raise ValidationError("Cannot create listing without owner")
        
         # R4-8
-        listings = Listing.objects(name=self.name, owner=self.owner.id)
+        listings = Listing.objects(title=self.title, owner=self.owner.id)
         print(listings)
         if len(listings) != 0:
-            raise ValidationError("Cannot create listing with same name")
+            raise ValidationError("Cannot create listing with same title")
                
     # String representation of Listing
     def __repr__(self):
-        return f"name: {self.name} price: {self.price}"
+        return f"title: {self.title} price: {self.price}"

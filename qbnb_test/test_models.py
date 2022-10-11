@@ -34,7 +34,7 @@ def test_r4_1_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name=key,
+            title=key,
             price=100,
             owner=owner,
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -45,7 +45,7 @@ def test_r4_1_listing_create():
         if value is False:
             assert ret is False
         # Delete our objects
-        listing = Listing.objects(name=key)
+        listing = Listing.objects(title=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
@@ -69,7 +69,7 @@ def test_r4_2_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name=key,
+            title=key,
             price=100,
             owner=owner,
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -80,7 +80,7 @@ def test_r4_2_listing_create():
         if value is False:
             assert ret is False
         # Delete our objects
-        listing = Listing.objects(name=key)
+        listing = Listing.objects(title=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
@@ -107,7 +107,7 @@ def test_r4_3_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name="ABCD 123",
+            title="ABCD 123",
             price=100.0,
             owner=owner,
             description=key,
@@ -144,7 +144,7 @@ def test_r4_4_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name=name,
+            title=name,
             price=100.0,
             owner=owner,
             description=description,
@@ -155,7 +155,7 @@ def test_r4_4_listing_create():
         if value is False:
             assert ret is False
         # Delete our objects
-        listing = Listing.objects(name=key)
+        listing = Listing.objects(title=key)
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
@@ -179,7 +179,7 @@ def test_r4_5_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name="ABCD 123",
+            title="ABCD 123",
             price=key,
             owner=owner,
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -190,7 +190,7 @@ def test_r4_5_listing_create():
         if value is False:
             assert ret is False
         # Delete our objects
-        listing = Listing.objects(name="ABCD 123")
+        listing = Listing.objects(title="ABCD 123")
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
@@ -215,7 +215,7 @@ def test_r4_6_listing_create():
         )
         owner.save()
         ret = create_listing(
-            name="ABCD 123",
+            title="ABCD 123",
             price=100.0,
             owner=owner,
             description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -226,7 +226,7 @@ def test_r4_6_listing_create():
         if value is False:
             assert ret is False
         # Delete our objects
-        listing = Listing.objects(name="ABCD 123")
+        listing = Listing.objects(title="ABCD 123")
         listing.delete()
         owner = User.objects(username="abcd123")
         owner.delete()
@@ -246,14 +246,14 @@ def test_r4_7_listing_create():
     )
     owner.save()
     ret = create_listing(
-        name="ABCD 123",
+        title="ABCD 123",
         price=100.0,
         owner=owner,
         description="ABCDEFGHIJKLMNOPQRSTUVQWXYZ",
         last_modified_date="2022-03-09"
     )
     assert ret is True 
-    listing = Listing.objects(name="ABCD 123")
+    listing = Listing.objects(title="ABCD 123")
     listing.delete()
     
 
@@ -271,7 +271,7 @@ def test_r4_8_listing_create():
     owner.save()
     # Test case 1
     ret = create_listing(
-        name="ABCD 123",
+        title="ABCD 123",
         price=100.0,
         owner=owner,
         description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -280,7 +280,7 @@ def test_r4_8_listing_create():
     assert ret is True
     # Test case 2
     ret = create_listing(
-        name="ABCD 123",
+        title="ABCD 123",
         price=100.0,
         owner=owner.id,
         description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -289,7 +289,7 @@ def test_r4_8_listing_create():
     assert ret is False
     # Test case 3
     ret = create_listing(
-        name="ABCD123",
+        title="ABCD123",
         price=100.0,
         owner=owner,
         description="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -297,9 +297,9 @@ def test_r4_8_listing_create():
     )
     assert ret is True
     # Delete all objects after we are done
-    listing = Listing.objects(name="ABCD 123")
+    listing = Listing.objects(title="ABCD 123")
     listing.delete()
-    listing = Listing.objects(name="ABCD123")
+    listing = Listing.objects(title="ABCD123")
     listing.delete()
     owner = User.objects(username="abcd123")
     owner.delete()

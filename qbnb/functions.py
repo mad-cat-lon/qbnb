@@ -3,7 +3,7 @@ from qbnb.models import *
 from mongoengine import *
 db = MongoEngine(app)
 
-def create_listing(name, price, owner, description, last_modified_date):
+def create_listing(title, price, owner, description, last_modified_date):
     '''
     Takes in name, price, owner, description and last_modified_date as
     input and attempts to save it to MongoDB. If the provided input is 
@@ -11,7 +11,7 @@ def create_listing(name, price, owner, description, last_modified_date):
     ValidationErrors, it will return False.
     '''
     listing = Listing(
-        name=name, price=price,
+        title=title, price=price,
         owner=owner, description=description,
         last_modified_date=last_modified_date
     )
