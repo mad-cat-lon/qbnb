@@ -5,6 +5,7 @@ from flask_mongoengine import MongoEngine
 from qbnb import app
 from qbnb.models import user_register
 
+
 # Route to retrieve all listings
 @app.route("/listings")
 def get_listings():

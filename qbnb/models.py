@@ -1,8 +1,8 @@
-from flask_mongoengine import BaseQuerySet
-from mongoengine import *
-from flask_mongoengine import MongoEngine
 from qbnb import app
 import re
+from mongoengine import *
+from flask_mongoengine import BaseQuerySet
+from flask_mongoengine import MongoEngine
 db = MongoEngine(app)
 
 """
@@ -49,6 +49,7 @@ class User(db.Document):
     def __repr__(self):
         return f"username: {self.username} email: {self.email}"
 
+
 """
 user registration function: Creates user in MongoDB.
 
@@ -62,48 +63,51 @@ On initialization of flask, two user's are created
 After this no it returns to normal
 """
 
-def user_register(_email, _password, _user_name, _balance = 100):
+
+def user_register(_email, _password, _user_name, _balance=100):
     special_characters = set('`~!@#$%^&*()_-=+\{\}\\|;:\'\",./?')
     regex_email_5322 = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
     regex_spaces = r"^\S$|^\S[ \S]*\S$"
     regex_alphanumeric = r"^[a-zA-Z0-9 ]*$"
     if _email == '' or _password == '':
-        return False
+        return
 
     if not (re.fullmatch(regex_email_5322, _email)):
-        return False
+        return
 
     if (len(_password) < 6):
-        return False
+        return
 
     if (_password.lower() == _password):
-        return False
+        return
     
     if (_password.upper() == _password):
-        return False
+        return
 
     if not special_characters.intersection(_password):
-        return False
+        return
 
     if _user_name == '':
-        return False
+        return
     
     if not (re.fullmatch(regex_alphanumeric, _user_name)):
-        return False
+        return
     
     if not (re.fullmatch(regex_spaces, _user_name)):
-        return False
+        return
 
     if not len(_user_name) > 2 or not len(_user_name) < 20:
-        return False
+        return
 
     if (User.objects(email=_email)):
-        return False
+        return
     
-    user = User(email = _email, password = _password, user_name = _user_name,
-                billing_address = '', postal_code = '', balance = _balance)
+    user = User(email=_email, password=_password, user_name=_user_name,
+                billing_address='', postal_code='', balance=_balance)
+
     user.save()
-    return True
+    return user
+
 
 
 """
