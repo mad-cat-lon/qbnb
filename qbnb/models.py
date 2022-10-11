@@ -132,7 +132,6 @@ def update_listing(title, new_title, description, price, new_price,
     --Description--
     Function for updating all attributes of a listing, except owner_id and
     last_modified_date. If parameter is None, then it is not changed.
-
     --Parameters--
     title: string, name of listing to be updated.
     new_title: string, updated name of listing.
@@ -141,14 +140,12 @@ def update_listing(title, new_title, description, price, new_price,
     new_price: float, new price, can be None.
     last_modified_date: integer, last modified date of listing, should be
     updated once operation is successful.
-
     """
     listing = Listing.objects(title=title)
     if len(listing) != 1:
         return False
     else:
         listing = listing[0]
-    
     if new_title is not None:
         if len(new_title) > 80:
             return False
@@ -157,14 +154,18 @@ def update_listing(title, new_title, description, price, new_price,
         for i in new_title:
             if not (i.isalnum() or i == ' '):
                 return False
-        listing.update(new_title=new_title)
+        listing.update(title=new_title)
         listing.reload()
 
     if description is not None:
         if len(description) < 20 or len(description) > 2000:
             return False
-        if len(description) <= len(new_title):
-            return False
+        if new_title is not None:
+            if len(description) <= len(new_title):
+                return False
+        else:
+            if len(description) <= len(title):
+                return False
         listing.update(description=description)
         listing.reload()
 
@@ -180,10 +181,7 @@ def update_listing(title, new_title, description, price, new_price,
         if int(last_modified_date) < 20210102 or\
                 int(last_modified_date) > 20250102:
             return False
-    
-    """
-    if update_listing(
-            title, description, price, new_price, last_modified_date) is True:
-        listing.update(last_modified_date=last_modified_date)
-    """
+
+    listing.update(last_modified_date=last_modified_date)
+
     return True
