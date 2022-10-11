@@ -2,8 +2,6 @@ import json
 from flask import Flask
 from flask import request, jsonify
 from flask_mongoengine import MongoEngine
-from Listing import Listing
-from Booking import Booking
 """
 Main flask server
 """
