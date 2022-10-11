@@ -27,4 +27,5 @@ jobs:
       
       - name: Run testing code 
         run: |
-          python qbnb_test/conftest.py
+          pip install pytest
+          pytest qbnb_test
