@@ -1,129 +1,148 @@
-"""
-Test cases for the file models.py
-"""
-from flask_mongoengine import BaseQuerySet
-from flask_mongoengine import QuerySet
+from qbnb.models import *
 from mongoengine import *
-from flask_mongoengine import MongoEngine
-from qbnb import app
-from qbnb.models import login, update_user, User
 
 
-def test_r2_1_login():
-    """
-    Testing R2-1: A user can log in using her/his email address 
-      and the password.
+def test_r1_1_user_register():
+    '''
+    Testing R1-1: Email cannot be empty. Password Cannot be empty.
+    '''
+    user0 = user_register("user11@gmail.com", "Password1!", "user1")
+    user1 = user_register("", "", "user1")
 
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    user = login('test0@test.com', 'A123456a')
-    dne_user = login('test@test.com', '123456Aa')
-    assert user is not False
-    assert user.email == "test0@test.com"
-    assert dne_user is False
+    assert user0 is not None
+    assert user1 is None
+    
+    user0.delete()
+
+
+def test_r1_2_user_register():
+    '''
+    Testing R1-2: A user is uniquely identified by his/her 
+    user id - automatically generated.
+    '''
+    user = user_register("user111S@gmail.com", "Password1!", "user1")
+
+    assert user.id is not None
     user.delete()
 
 
-def test_r2_2_login():
-    """
-    Testing for R2-2:The login function should check if the
-    supplied inputs meet the same email/ password requirements
-    as above, before checking the database. 
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    user = login('test0@test.com', '123456a')
-    # if login does not check before the search, it would return True
-    assert user is False
-    User.objects(email='test0@test.com', password='A123456a').delete()
+def test_r1_3_user_register():
+    '''
+    Testing R1-3: The email has to follow addr-spec defined in 
+    RFC 5322 (see https://en.wikipedia.org/wiki/Email_address for a 
+    human-friendly explanation). You can use external libraries/imports.
+    '''
+    user0 = user_register("user000email", "Password1!", "user0")
+    user1 = user_register("user1213@gmail.com", "Password1!", "user2")
+    assert user0 is None
+    assert user1 is not None
+
+    user1.delete()
 
 
-def test_r3_1_update_user():
-    """
-    Testing for R3-1:TA user is only able to update his/her 
-    user name, user email, billing address, and postal code.
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    result = update_user('test0@test.com', 'newname', 'newemail@test.com',
-                         'address', 'C1A 5A4')
-    user = User.objects(email='newemail@test.com')
-    user = user[0]
-    assert result is not False
-    assert user.email == "newemail@test.com"
-    assert user.user_name == 'newname'
-    assert user.billing_address == 'address'
-    assert user.postal_code == 'C1A 5A4'
-    assert user.password == 'A123456a'
-    assert user.balance == 100
-    user.delete()
+def test_r1_4_user_register():
+    '''
+    Testing R1-4: Password has to meet the required complexity: 
+    minimum length 6, at least one upper case, at least one lower 
+    case, and at least one special character.
+    '''
+    user0 = user_register("user031@email.comn", "Password1!", "user0")
+    user1 = user_register("user112@gmail.com", "Pswd", "user1")
+    user2 = user_register("user532@email.com", "password1!", "user2")
+    user3 = user_register("user313@email.com", "PASSWORD1!", "user3")
+    user4 = user_register("user24@gmail.com", "Password1", "user4")
+
+    assert user0 is not None
+    assert user1 is None
+    assert user2 is None
+    assert user3 is None
+    assert user4 is None
+
+    user0.delete()
 
 
-def test_r3_2_update_user():
-    """
-    Testing for R3-2: postal code should be non-empty,
-    alphanumeric-only, and no special characters such as !.
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    user = User.objects(email='test0@test.com')
-    result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
-    invalid_result_1 = update_user('test0@test.com', None, None, None, '')
-    invalid_result_2 = update_user('test0@test.com', None, None,
-                                   None, 'C/A 4!5')
-    assert result is True
-    assert invalid_result_1 is False
-    assert invalid_result_2 is False
-    assert user[0].postal_code == 'C1A 5A4'
-    user[0].delete()
+def test_r1_5_user_register():
+    '''
+    Testing R1-5: User name has to be non-empty, alphanumeric-only, 
+    and space allowed only if it is not as the prefix or suffix.
+    '''
+    user0 = user_register("user0412@email.com", "Password1!", "user0")
+    user1 = user_register("user114@gmail.com", "Password1!", "user2!")
+    user2 = user_register("user232@email.com", "Password1!", " user0")
+    user3 = user_register("user353@gmail.com", "Password1!", "user2 ")
+
+    assert user0 is not None
+    assert user1 is None
+    assert user2 is None
+    assert user3 is None
+    
+    user0.delete()
 
 
-def test_r3_3_update_user():
-    """
-    Test for R3-3: Postal code has to be a valid Canadian postal code.
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    user = User.objects(email='test0@test.com')
-    result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
-    invalid_result_1 = update_user('test0@test.com', None,
-                                   None, None, 'C11 5Aa')
-    assert result is True
-    assert invalid_result_1 is False
-    assert user[0].postal_code == 'C1A 5A4'
-    user[0].delete()
+def test_r1_6_user_register():
+    '''
+    Testing R1-6: User name has to be longer than 2 characters 
+    and less than 20 characters.
+    '''
+    user0 = user_register("user140@email.com", "Password1!", "user0")
+    user1 = user_register("user1124@gmail.com", "Password1!", "u")
+    user2 = user_register(
+        "u2142@email.com",
+        "Password1!", 
+        "usernamedextendedtwo2")
+
+    assert user0 is not None
+    assert user1 is None
+    assert user2 is None
+
+    user0.delete()
 
 
-def test_r3_4_update_user():
-    """
-    Test for user name following the guideline
-    """
-    user = User(email='test0@test.com', password='A123456a',
-                user_name='u0', postal_code='',
-                billing_address='', balance=100)
-    user.save()
-    user = User.objects(email='test0@test.com')
-    result = update_user('test0@test.com', 'test User1', None, None, None)
-    invalid_result_1 = update_user('test0@test.com', '', None, None, None)
-    invalid_result_2 = update_user('test0@test.com', 'a1-', None, None, None)
-    invalid_result_3 = update_user('test0@test.com', ' a', None, None, None)
-    invalid_result_4 = update_user('test0@test.com', 'a ', None, None, None)
-    assert result is True
-    assert user[0].user_name == 'test User1'
-    assert invalid_result_1 is False
-    assert invalid_result_2 is False
-    assert invalid_result_3 is False
-    assert invalid_result_4 is False
-    assert user[0].user_name == 'test User1'
-    user[0].delete()
+def test_r1_7_user_register():
+    '''
+    Testing R1-7: If the email has been used, the operation failed.
+    '''
+    user0 = user_register('user0@gmail.com', 'Password1!', 'user0')
+    user1 = user_register('user1@gmail.com', 'Password1!', 'user0')
+    user2 = user_register('user0@gmail.com', 'Password1!', 'user1')
+
+    assert user0 is not None
+    assert user1 is not None
+    assert user2 is None
+
+    user0.delete()
+    user1.delete()
+
+
+def test_r1_8_user_register():
+    '''
+    Testing R1-8: Shipping address is empty at the time of registration.
+    '''
+    user0 = user_register("user55@email.com", "Password1!", "user0")
+
+    assert user0.billing_address == ""
+
+    user0.delete()
+
+
+def test_r1_9_user_register():
+    '''
+    Testing R1-9: Postal code is empty at the time of registration.
+    '''
+    user0 = user_register("user66@email.com", "Password1!", "user0")
+
+    assert user0.postal_code == ""
+
+    user0.delete()
+
+
+def test_r1_10_user_register():
+    '''
+    Testing R1-10: Balance should be initialized as 100 at the 
+    time of registration. (free $100 dollar signup bonus).
+    '''
+    user0 = user_register("user255@email.com", "Password1!", "user0")
+
+    assert user0.balance == 100
+
+    user0.delete()

@@ -1,9 +1,10 @@
-from flask_mongoengine import BaseQuerySet
-from mongoengine import *
-from flask_mongoengine import MongoEngine
 from qbnb import app
 import re
+from mongoengine import *
+from flask_mongoengine import BaseQuerySet
+from flask_mongoengine import MongoEngine
 db = MongoEngine(app)
+
 """
 Base Booking class
 user_id: id of the user booking the place
@@ -37,16 +38,77 @@ balance: Account balance of the user
 """
 
 
-class User(Document):
+class User(db.Document):
     email = EmailField(required=True)
     password = StringField(required=True)
     user_name = StringField(required=True)
-    billing_address = StringField()
-    postal_code = StringField()
+    billing_address = StringField(required=True)
+    postal_code = StringField(required=True)
     balance = FloatField(required=True)
 
     def __repr__(self):
         return f"username: {self.username} email: {self.email}"
+
+
+"""
+user registration function: Creates user in MongoDB.
+
+Parameters
+_email: User's email
+_password: User's password
+_user_name: User's username
+_balance: Preset to 100
+
+On initialization of flask, two user's are created 
+After this no it returns to normal
+"""
+
+
+def user_register(_email, _password, _user_name, _balance=100):
+    # Regex predefined for email format, spaces at start and end,
+    # as well as an alphanumeric string
+    special_characters = set('`~!@#$%^&*()_-=+\{\}\\|;:\'\",./?')
+    regex_email_5322 = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    regex_spaces = r"^\S$|^\S[ \S]*\S$"
+    regex_alphanumeric = r"^[a-zA-Z0-9 ]*$"
+    if _email == '' or _password == '':
+        return
+
+    if not (re.fullmatch(regex_email_5322, _email)):
+        return
+
+    if (len(_password) < 6):
+        return
+
+    if (_password.lower() == _password):
+        return
+    
+    if (_password.upper() == _password):
+        return
+
+    if not special_characters.intersection(_password):
+        return
+
+    if _user_name == '':
+        return
+    
+    if not (re.fullmatch(regex_alphanumeric, _user_name)):
+        return
+    
+    if not (re.fullmatch(regex_spaces, _user_name)):
+        return
+
+    if not len(_user_name) > 2 or not len(_user_name) < 20:
+        return
+
+    if (User.objects(email=_email)):
+        return
+    
+    user = User(email=_email, password=_password, user_name=_user_name,
+                billing_address='', postal_code='', balance=_balance)
+
+    user.save()
+    return user
 
 
 """
