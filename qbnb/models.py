@@ -104,7 +104,7 @@ class Listing(db.Document):
 
     # String representation of Listing
     def __repr__(self):
-        return f"name: {self.name} price: {self.price}"
+        return f"name: {self.title} price: {self.price}"
 
 
 """
