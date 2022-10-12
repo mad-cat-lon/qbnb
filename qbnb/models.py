@@ -52,14 +52,14 @@ balance: Account balance of the user
 
 class User(db.Document):
     email = EmailField(required=True)
-    password = StringField(required=True, primary_key=True)
+    password = StringField()
     user_name = StringField(required=True)
-    billing_address = StringField(required=True)
-    postal_code = StringField(required=True)
-    balance = FloatField(required=True)
+    billing_address = StringField()
+    postal_code = StringField()
+    balance = FloatField()
    
     def __repr__(self):
-        return f"username: {self.username} email: {self.email}"
+        return f"username: {self.user_name} email: {self.email}"
 
 
 """
@@ -167,11 +167,12 @@ current_booking: the current booking
 
 
 class Listing(db.Document):
-    title = StringField(required=True)
-    description = StringField(required=True)
-    price = FloatField(required=True)
-    last_modified_date = IntField(required=True)
-    owner_id = IntField(required=True)
+    title = StringField()
+    description = StringField()
+    price = FloatField()
+    last_modified_date = DateTimeField()
+    owner_id = IntField()
+    owner = ReferenceField(User)
     meta = {"queryset_class": BaseQuerySet}
 
     def check(self):
@@ -377,7 +378,7 @@ def update_listing(title, new_title, description, price, new_price,
     description: string, description of listing to be updated.
     price: float, price of listing to be updated, can only be increased.
     new_price: float, new price, can be None.
-    last_modified_date: integer, last modified date of listing, should be
+    last_modified_date: string, last modified date of listing, should be
     updated once operation is successful.
     """
     listing = Listing.objects(title=title)
@@ -417,8 +418,10 @@ def update_listing(title, new_title, description, price, new_price,
         listing.reload()
 
     if last_modified_date is not None:
-        if int(last_modified_date) < 20210102 or\
-                int(last_modified_date) > 20250102:
+        last_modified_date = datetime.datetime.strptime(
+            last_modified_date, "%Y-%m-%d").date()
+        if (last_modified_date < datetime.date(2021, 1, 2) or
+                last_modified_date > datetime.date(2025, 1, 2)):
             return False
 
     listing.update(last_modified_date=last_modified_date)

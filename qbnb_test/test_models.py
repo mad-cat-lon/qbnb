@@ -6,6 +6,8 @@ from mongoengine import *
 from mongoengine import *
 from qbnb import app
 from qbnb.models import update_listing, Listing
+import datetime
+
 
 def test_r1_1_user_register():
     '''
@@ -153,6 +155,126 @@ def test_r1_10_user_register():
     user0.delete()
 
 
+def test_r2_1_login():
+    """
+    Testing R2-1: A user can log in using her/his email address 
+      and the password.
+
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    user = login('test0@test.com', 'A123456a')
+    dne_user = login('test@test.com', '123456Aa')
+    assert user is not False
+    assert user.email == "test0@test.com"
+    assert dne_user is False
+    user.delete()
+
+
+def test_r2_2_login():
+    """
+    Testing for R2-2:The login function should check if the
+    supplied inputs meet the same email/ password requirements
+    as above, before checking the database. 
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    user = login('test0@test.com', '123456a')
+    # if login does not check before the search, it would return True
+    assert user is False
+    User.objects(email='test0@test.com', password='A123456a').delete()
+
+
+def test_r3_1_update_user():
+    """
+    Testing for R3-1:TA user is only able to update his/her 
+    user name, user email, billing address, and postal code.
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    result = update_user('test0@test.com', 'newname', 'newemail@test.com',
+                         'address', 'C1A 5A4')
+    user = User.objects(email='newemail@test.com')
+    user = user[0]
+    assert result is not False
+    assert user.email == "newemail@test.com"
+    assert user.user_name == 'newname'
+    assert user.billing_address == 'address'
+    assert user.postal_code == 'C1A 5A4'
+    assert user.password == 'A123456a'
+    assert user.balance == 100
+    user.delete()
+
+
+def test_r3_2_update_user():
+    """
+    Testing for R3-2: postal code should be non-empty,
+    alphanumeric-only, and no special characters such as !.
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    user = User.objects(email='test0@test.com')
+    result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
+    invalid_result_1 = update_user('test0@test.com', None, None, None, '')
+    invalid_result_2 = update_user('test0@test.com', None, None,
+                                   None, 'C/A 4!5')
+    assert result is True
+    assert invalid_result_1 is False
+    assert invalid_result_2 is False
+    assert user[0].postal_code == 'C1A 5A4'
+    user[0].delete()
+
+
+def test_r3_3_update_user():
+    """
+    Test for R3-3: Postal code has to be a valid Canadian postal code.
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    user = User.objects(email='test0@test.com')
+    result = update_user('test0@test.com', None, None, None, 'C1A 5A4')
+    invalid_result_1 = update_user('test0@test.com', None,
+                                   None, None, 'C11 5Aa')
+    assert result is True
+    assert invalid_result_1 is False
+    assert user[0].postal_code == 'C1A 5A4'
+    user[0].delete()
+
+
+def test_r3_4_update_user():
+    """
+    Test for user name following the guideline
+    """
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='u0', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    user = User.objects(email='test0@test.com')
+    result = update_user('test0@test.com', 'test User1', None, None, None)
+    invalid_result_1 = update_user('test0@test.com', '', None, None, None)
+    invalid_result_2 = update_user('test0@test.com', 'a1-', None, None, None)
+    invalid_result_3 = update_user('test0@test.com', ' a', None, None, None)
+    invalid_result_4 = update_user('test0@test.com', 'a ', None, None, None)
+    assert result is True
+    assert user[0].user_name == 'test User1'
+    assert invalid_result_1 is False
+    assert invalid_result_2 is False
+    assert invalid_result_3 is False
+    assert invalid_result_4 is False
+    assert user[0].user_name == 'test User1'
+    user[0].delete()
+
+    
 def test_r4_1_listing_create():
     '''
     Testing R4-1 in listing creation
@@ -175,8 +297,7 @@ def test_r4_1_listing_create():
     for key, value in test_cases.items(): 
         print(key, value)
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -195,7 +316,7 @@ def test_r4_1_listing_create():
         # Delete our objects
         listing = Listing.objects(title=key)
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -210,8 +331,7 @@ def test_r4_2_listing_create():
     }
     for key, value in test_cases.items(): 
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -230,7 +350,7 @@ def test_r4_2_listing_create():
         # Delete our objects
         listing = Listing.objects(title=key)
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -248,8 +368,7 @@ def test_r4_3_listing_create():
     }
     for key, value in test_cases.items(): 
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -268,7 +387,7 @@ def test_r4_3_listing_create():
         # Delete our objects
         listing = Listing.objects(description=key)
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -285,8 +404,7 @@ def test_r4_4_listing_create():
         name = key[1]
         description = key[0]
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -305,7 +423,7 @@ def test_r4_4_listing_create():
         # Delete our objects
         listing = Listing.objects(title=key)
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -320,8 +438,7 @@ def test_r4_5_listing_create():
     }
     for key, value in test_cases.items(): 
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -340,7 +457,7 @@ def test_r4_5_listing_create():
         # Delete our objects
         listing = Listing.objects(title="ABCD 123")
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -356,8 +473,7 @@ def test_r4_6_listing_create():
     }
     for key, value in test_cases.items(): 
         owner = User(
-            id=1,
-            username="abcd123",
+            user_name="abcd123",
             email="abcd@email.com",
             balance=100.0
         )
@@ -376,7 +492,7 @@ def test_r4_6_listing_create():
         # Delete our objects
         listing = Listing.objects(title="ABCD 123")
         listing.delete()
-        owner = User.objects(username="abcd123")
+        owner = User.objects(user_name="abcd123")
         owner.delete()
 
 
@@ -387,8 +503,7 @@ def test_r4_7_listing_create():
     '''
     # Test case 1
     owner = User(
-        id=1,
-        username="abcd123",
+        user_name="abcd123",
         email="abcd@email.com",
         balance=100.0
     )
@@ -403,6 +518,8 @@ def test_r4_7_listing_create():
     assert ret is True 
     listing = Listing.objects(title="ABCD 123")
     listing.delete()
+    owner = User.objects(user_name="abcd123")
+    owner.delete()
     
 
 def test_r4_8_listing_create():
@@ -411,8 +528,7 @@ def test_r4_8_listing_create():
     Requirement: users cannot create products that have the same title
     '''
     owner = User(
-        id=1,
-        username="abcd123",
+        user_name="abcd123",
         email="abcd@email.com",
         balance=100.0
     )
@@ -449,7 +565,7 @@ def test_r4_8_listing_create():
     listing.delete()
     listing = Listing.objects(title="ABCD123")
     listing.delete()
-    owner = User.objects(username="abcd123")
+    owner = User.objects(user_name="abcd123")
     owner.delete()
 
 
@@ -461,19 +577,20 @@ def test_r5_1_update_listing():
     listing = Listing(title='Beverly Hills Inn',
                       description='Luxury suite with sea view.',
                       price=2000,
-                      last_modified_date=20220928,
+                      last_modified_date="2022-03-09",
                       owner_id=1234)
     listing.save()
     result = update_listing('Beverly Hills Inn', 'Beverly Hills Mansion',
                             'Luxury suite with sea view. Test', 2000, 2000,
-                            20220928)
+                            "2022-03-08")
     listing = Listing.objects(title='Beverly Hills Mansion')
     assert result is not False
     listing = listing[0]
     assert listing.price == 2000
     assert listing.title == 'Beverly Hills Mansion'
     assert listing.description == 'Luxury suite with sea view. Test'
-    assert listing.last_modified_date == 20220928
+    time = datetime.datetime.strptime("2022-03-08", "%Y-%m-%d").date()
+    assert listing.last_modified_date.date() == time
     listing.delete()
 
 
@@ -483,15 +600,15 @@ def test_r5_2_update_listing():
     """
     listing = Listing(
         title='Beverly Hills Inn', description='Luxury suite with sea view.',
-        price=2000, last_modified_date=20220928, owner_id=123)
+        price=2000, last_modified_date="2022-03-09", owner_id=123)
     listing.save()
     listing = Listing.objects(title='Beverly Hills Inn')
     result = update_listing('Beverly Hills Inn', None,
                             'Luxury suite with sea view.',
-                            2000, 2300, 20220928)
+                            2000, 2300, None)
     invalid_result = update_listing('Beverly Hills Inn', None,
                                     'Luxury suite with sea view.',
-                                    2000, 1900, 20220928)
+                                    2000, 1900, None)
     assert result is True
     assert invalid_result is False
     assert listing[0].price == 2300
@@ -505,18 +622,19 @@ def test_r5_3_update_listing():
     """
     listing = Listing(
         title='Beverly Hills Inn', description='Luxury suite with sea view.',
-        price=2000, last_modified_date=20220928, owner_id=123)
+        price=2000, last_modified_date="2022-03-09", owner_id=123)
     listing.save()
     listing = Listing.objects(title='Beverly Hills Inn')
     result = update_listing('Beverly Hills Inn', None,
                             'Luxury suite with sea view.',
-                            2000, 2300, 20220928)
+                            2000, 2300, "2022-03-10")
     invalid_result = update_listing('Beverly Hills Inn', None,
                                     'Luxury suite with sea view.',
-                                    2000, 1900, 20221010)
+                                    2000, 1900, "2022-03-11")
     assert result is True
     assert invalid_result is False
-    assert listing[0].last_modified_date == 20220928
+    time = datetime.datetime.strptime("2022-03-10", "%Y-%m-%d").date()
+    assert listing[0].last_modified_date.date() == time
     listing[0].delete()
 
 
@@ -527,17 +645,17 @@ def test_r5_4_update_listing():
     """
     listing = Listing(
         title='Beverly Hills Inn', description='Luxury suite with sea view.',
-        price=2000, last_modified_date=20220928, owner_id=123)
+        price=2000, last_modified_date="2022-03-10", owner_id=123)
     listing.save()
     result = update_listing('Beverly Hills Inn', 'Beverly Hills Mansion',
                             'Luxury suite with sea view. Test', 2000, 2300,
-                            20220928)
+                            "2022-03-11")
     invalid_result_1 = update_listing('Beverly Hills Inn', None, 'nice', 2000,
-                                      2300, 20220928)
+                                      2300, None)
     invalid_result_2 = update_listing('Beverly! Hills Inn',
                                       'Beverly Hills Mansion',
                                       'Luxury suite with sea view. Test',
-                                      2000, 2300, 20220928)
+                                      2000, 2300, None)
     listing = Listing.objects(title='Beverly Hills Mansion')
     listing = listing[0]
     assert result is True
