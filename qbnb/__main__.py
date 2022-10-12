@@ -4,6 +4,9 @@ from flask import request, jsonify
 from flask_mongoengine import MongoEngine
 from qbnb import app
 from qbnb.models import user_register
+from mongoengine import ValidationError
+from qbnb import app
+from qbnb.models import Listing
 
 
 # Route to retrieve all listings
@@ -18,7 +21,13 @@ def get_listings():
 def create_listing():
     body = request.get_json()
     listing = Listing(**body)
-    return jsonify(listing), 200
+    try:
+        listing.check()
+        listing.save()
+        return jsonify(listing), 200
+    except ValidationError as e:
+        print(e.message)
+        return jsonify(listing), 500
 
 
 # Route to request a booking for a listing 
@@ -35,8 +44,10 @@ def request_booking(id):
 
 
 # Route to confirm a requested booking for a listing
-@app.route("/listings/<listing_id>/confirm_booking/<booking_id>",
-           methods=["GET"])
+@app.route(
+    "/listings/<listing_id>/confirm_booking/<booking_id>",
+          
+    methods=["GET"])
 def confirm_booking(listing_id, booking_id):
     listing = Listing.objects.get_or_404(id=listing_id)
     booking = Booking.objects.get_or_404(id=booking_id)
