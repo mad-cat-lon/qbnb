@@ -3,6 +3,9 @@ from mongoengine import *
 from qbnb.models import *
 from qbnb.functions import *
 from mongoengine import *
+from mongoengine import *
+from qbnb import app
+from qbnb.models import update_listing, Listing
 
 def test_r1_1_user_register():
     '''
@@ -449,3 +452,96 @@ def test_r4_8_listing_create():
     owner = User.objects(username="abcd123")
     owner.delete()
 
+
+def test_r5_1_update_listing():
+    """
+    Testing for R5-1: admin is able to update all attributes
+        of the listing, except owner_id and last_modified_date.
+    """
+    listing = Listing(title='Beverly Hills Inn',
+                      description='Luxury suite with sea view.',
+                      price=2000,
+                      last_modified_date=20220928,
+                      owner_id=1234)
+    listing.save()
+    result = update_listing('Beverly Hills Inn', 'Beverly Hills Mansion',
+                            'Luxury suite with sea view. Test', 2000, 2000,
+                            20220928)
+    listing = Listing.objects(title='Beverly Hills Mansion')
+    assert result is not False
+    listing = listing[0]
+    assert listing.price == 2000
+    assert listing.title == 'Beverly Hills Mansion'
+    assert listing.description == 'Luxury suite with sea view. Test'
+    assert listing.last_modified_date == 20220928
+    listing.delete()
+
+
+def test_r5_2_update_listing():
+    """
+    Testing for R5-2: admin is only able to increase price.
+    """
+    listing = Listing(
+        title='Beverly Hills Inn', description='Luxury suite with sea view.',
+        price=2000, last_modified_date=20220928, owner_id=123)
+    listing.save()
+    listing = Listing.objects(title='Beverly Hills Inn')
+    result = update_listing('Beverly Hills Inn', None,
+                            'Luxury suite with sea view.',
+                            2000, 2300, 20220928)
+    invalid_result = update_listing('Beverly Hills Inn', None,
+                                    'Luxury suite with sea view.',
+                                    2000, 1900, 20220928)
+    assert result is True
+    assert invalid_result is False
+    assert listing[0].price == 2300
+    listing[0].delete()
+
+
+def test_r5_3_update_listing():
+    """
+    Testing for R5-3: last_modified_date can only be updated\
+         when the update operation is successful.
+    """
+    listing = Listing(
+        title='Beverly Hills Inn', description='Luxury suite with sea view.',
+        price=2000, last_modified_date=20220928, owner_id=123)
+    listing.save()
+    listing = Listing.objects(title='Beverly Hills Inn')
+    result = update_listing('Beverly Hills Inn', None,
+                            'Luxury suite with sea view.',
+                            2000, 2300, 20220928)
+    invalid_result = update_listing('Beverly Hills Inn', None,
+                                    'Luxury suite with sea view.',
+                                    2000, 1900, 20221010)
+    assert result is True
+    assert invalid_result is False
+    assert listing[0].last_modified_date == 20220928
+    listing[0].delete()
+
+
+def test_r5_4_update_listing():
+    """
+    Testing for R5-4: test for whether attributes follow the same\
+        requirements.
+    """
+    listing = Listing(
+        title='Beverly Hills Inn', description='Luxury suite with sea view.',
+        price=2000, last_modified_date=20220928, owner_id=123)
+    listing.save()
+    result = update_listing('Beverly Hills Inn', 'Beverly Hills Mansion',
+                            'Luxury suite with sea view. Test', 2000, 2300,
+                            20220928)
+    invalid_result_1 = update_listing('Beverly Hills Inn', None, 'nice', 2000,
+                                      2300, 20220928)
+    invalid_result_2 = update_listing('Beverly! Hills Inn',
+                                      'Beverly Hills Mansion',
+                                      'Luxury suite with sea view. Test',
+                                      2000, 2300, 20220928)
+    listing = Listing.objects(title='Beverly Hills Mansion')
+    listing = listing[0]
+    assert result is True
+    assert invalid_result_1 is False
+    assert invalid_result_2 is False
+    assert listing.title == 'Beverly Hills Mansion'
+    listing.delete()
