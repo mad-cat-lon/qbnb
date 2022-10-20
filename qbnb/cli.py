@@ -1,4 +1,4 @@
-from qbnb.models import login, update_user
+from qbnb.models import login, update_user, User
 
 
 def login_page():
@@ -33,9 +33,18 @@ def update_user_page(user):
     if postal_code == '':
         postal_code = None
 
-    result = update_user(user.email, user_name, email, billing_address,
+    org_email = user.email
+    result = update_user(org_email, user_name, email, billing_address,
                          postal_code)
+
     if result is True:
+        if email is not None:
+            user = User.objects(email=email)
+            user = user[0]     
+        else:
+            user = User.objects(email=org_email)
+            user = user[0]   
         print("User profile updated.\n")
+        return user
     else:
         print("Update failed.\n")
