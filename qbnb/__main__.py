@@ -3,6 +3,7 @@ from flask import Flask
 from flask import request, jsonify
 from flask_mongoengine import MongoEngine
 from qbnb import app
+from qbnb.cli import user_home_page
 from qbnb.models import user_register
 from mongoengine import ValidationError
 from qbnb import app
@@ -46,7 +47,7 @@ def request_booking(id):
 # Route to confirm a requested booking for a listing
 @app.route(
     "/listings/<listing_id>/confirm_booking/<booking_id>",
-          
+
     methods=["GET"])
 def confirm_booking(listing_id, booking_id):
     listing = Listing.objects.get_or_404(id=listing_id)
@@ -61,4 +62,23 @@ def confirm_booking(listing_id, booking_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    while True:
+        selection = input(
+            'Welcome to qbnb!\n\
+            1. Log in\n\
+            2. Register\n\
+            3. Exit')
+        selection = selection.strip()
+        if selection == '1':
+            user = login_page()
+            if user is not False:
+                print(f'Welcome {user.username}!')
+                user_home_page(user)
+                break
+            else:
+                print('Login failed!')
+        elif selection == '2':
+            register_page()
+        elif selection == '3':
+            break
+    # app.run(debug=True)
