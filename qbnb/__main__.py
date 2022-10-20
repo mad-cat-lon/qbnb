@@ -59,23 +59,3 @@ def confirm_booking(listing_id, booking_id):
     listing.current_booking = booking
     listing.save()
     return jsonify(listing), 200
-
-
-if __name__ == "__main__":
-    listing = Listing(title='Beverly Hills Inn',
-                      description='Luxury suite with sea view.',
-                      price=2000,
-                      last_modified_date="2022-03-09",
-                      owner_id=1234)
-    listing.save()
-    while True:
-        selection = input(
-            'Welcome. Please type 1 to update listing.')
-        selection = selection.strip()
-        if selection == '1':
-            updateListing = listing_update_page(listing)
-            break
-        elif selection == '2':
-            break
-    listing.delete()
-
