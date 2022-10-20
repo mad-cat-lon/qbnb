@@ -33,8 +33,9 @@ def update_user_page(user):
     if postal_code == '':
         postal_code = None
 
-    result = update_user(user.email, user_name, email, billing_address, postal_code)
-    if result == True:
-        print("User profile updated.")
+    result = update_user(user.email, user_name, email, billing_address,
+                         postal_code)
+    if result is True:
+        print("User profile updated.\n")
     else:
-        print("Update failed.")
+        print("Update failed.\n")
