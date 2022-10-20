@@ -47,7 +47,7 @@ def request_booking(id):
 # Route to confirm a requested booking for a listing
 @app.route(
     "/listings/<listing_id>/confirm_booking/<booking_id>",
-   
+
     methods=["GET"])
 def confirm_booking(listing_id, booking_id):
     listing = Listing.objects.get_or_404(id=listing_id)
@@ -64,8 +64,10 @@ def confirm_booking(listing_id, booking_id):
 if __name__ == "__main__":
     while True:
         selection = input(
-            'Welcome. Please type 1 to login. '
-            'Or type 2 to register. Or type 3 to exit')
+            'Welcome to qbnb!\n\
+            1. Log in\n\
+            2. Register\n\
+            3. Exit')
         selection = selection.strip()
         if selection == '1':
             user = login_page()
