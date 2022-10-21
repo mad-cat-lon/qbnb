@@ -39,12 +39,12 @@ def update_user_page(user):
 
     if result is True:
         if email is not None:
-            user = User.objects(email=email)
-            user = user[0]     
+            updated_user = User.objects(email=email)
+            updated_user = updated_user[0]     
         else:
-            user = User.objects(email=org_email)
-            user = user[0]   
+            updated_user = User.objects(email=org_email)
+            updated_user = updated_user[0]   
         print("User profile updated.\n")
-        return user
+        return updated_user
     else:
         print("Update failed.\n")
