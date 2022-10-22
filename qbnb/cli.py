@@ -11,7 +11,7 @@ def listing_update_page(listing):
         new_title = None
     if new_description == "":
         new_description = None
-    if new_price == "":
+    if new_price == 0:
         new_price = None
     push = update_listing(
         title=listing.title,
