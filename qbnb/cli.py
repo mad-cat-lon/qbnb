@@ -1,7 +1,8 @@
 from qbnb.models import user_register
 from qbnb.functions import create_listing
 from datetime import datetime
-from qbnb.models import login, update_user, User
+from qbnb.models import login, update_user, User, Listing
+from qbnb.models import update_listing
 
 
 def user_home_page(user):
@@ -9,20 +10,16 @@ def user_home_page(user):
     Displays user home page
     """
     print(f"{'='*10} USER HOME PAGE {'='*10}")
-    print(
-        "1. Update profile information\n\
-         2. Create listing\n\
-         3. Update listing\n\
-         4. Exit"
-    )
+    print("1. Update profile information\n2. Create listing")
+    print("3. Update listing\n4. Exit")
     while True:
         choice = input("Enter choice: ")
         if choice == "1":
-            pass
+            user = update_user_page(user)
         elif choice == "2":
             create_listing_page(user)
         elif choice == "3":
-            pass
+            listing_update_page(user)
         elif choice == "4":
             break
 
@@ -47,6 +44,7 @@ def create_listing_page(user):
             print("Listing saved.")
             break
 
+
 def register_page():
     email = input('Please enter your email: ')
     user_name = input('Please enter your username: ')
@@ -59,6 +57,7 @@ def register_page():
         print('User Registered')
     else:
         print('User registration failed.')
+
 
 def login_page():
     """
@@ -99,7 +98,7 @@ def update_user_page(user):
     if result is True:
         if email is not None:
             updated_user = User.objects(email=email)
-            updated_user = updated_user[0]     
+            updated_user = updated_user[0]    
         else:
             updated_user = User.objects(email=org_email)
             updated_user = updated_user[0]   
@@ -107,3 +106,37 @@ def update_user_page(user):
         return updated_user
     else:
         print("Update failed.\n")
+
+
+def listing_update_page(user):
+    listings = Listing.objects(owner=user)
+    for index, listing in enumerate(listings):
+        print(f"{index+1}. {listing.title}")
+    choice = int(input("Please pick which listing you would like to edit: "))
+    listing = None
+    if choice < 1 or choice > len(listings):
+        print("Invalid choice.")
+        exit()
+    else:
+        listing = listings[choice-1]
+    new_title = input('Please enter new title: ')
+    new_description = input('Please enter new description: ')
+    new_price = float(input('Please enter new price: '))
+    if new_title == "":
+        new_title = None
+    if new_description == "":
+        new_description = None
+    if new_price == 0:
+        new_price = None
+    push = update_listing(
+        title=listing.title,
+        new_title=new_title,
+        description=new_description,
+        price=listing.price,
+        new_price=new_price,
+        last_modified_date=datetime.now().strftime("%Y-%m-%d")
+    )
+    if push is True:
+        print('Listing updated.')
+    else:
+        print("Could not update listing")
