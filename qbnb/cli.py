@@ -118,7 +118,7 @@ def listing_update_page(user):
         print("Invalid choice.")
         exit()
     else:
-        listing = listings[choice-1]
+        listing = listings[choice - 1]
     new_title = input('Please enter new title: ')
     new_description = input('Please enter new description: ')
     new_price = float(input('Please enter new price: '))
