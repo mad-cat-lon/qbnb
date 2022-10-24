@@ -1,6 +1,7 @@
-<<<<<<< HEAD
+from qbnb.models import user_register
 from qbnb.functions import create_listing
 from datetime import datetime
+from qbnb.models import login, update_user, User
 
 
 def user_home_page(user):
@@ -45,9 +46,19 @@ def create_listing_page(user):
         if ret is True:
             print("Listing saved.")
             break
-=======
-from qbnb.models import login, update_user, User
 
+def register_page():
+    email = input('Please enter your email: ')
+    user_name = input('Please enter your username: ')
+    password = input('Please enter your password: ')
+    password_verify = input('Please confirm your password: ')
+
+    if password != password_verify:
+        print("Please ensure both passwords are the same")
+    elif user_register(email, password, user_name):
+        print('User Registered')
+    else:
+        print('User registration failed.')
 
 def login_page():
     """
@@ -96,4 +107,3 @@ def update_user_page(user):
         return updated_user
     else:
         print("Update failed.\n")
->>>>>>> 0cc33921a468b49aa8ca322aa9de250b66de436a
