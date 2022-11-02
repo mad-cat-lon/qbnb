@@ -9,7 +9,7 @@ current_folder = Path(__file__).parent
 
 
 # read expected in/out
-expected_in_both_invalid= open(current_folder.joinpath(
+expected_in_both_invalid = open(current_folder.joinpath(
     'test_login_invalid_email_password.in'))
 expected_in_invalid_email = open(current_folder.joinpath(
     'test_login_invalid_email.in'))
@@ -24,27 +24,33 @@ expected_out_valid = open(current_folder.joinpath(
     'test_login_valid.out')).read()
 
 
-
+# Input partition method with the input divided into four part
 
 def test_login_invalid_email_password():
-    """capsys -- object created by pytest to 
-    capture stdout and stderr"""
+    """
+    Input partition test for input with both invalid
+    passowrd and email
+    """
 
-    # pip the input
     output = subprocess.run(
         ['python', '-m', 'qbnb'],
         stdin=expected_in_both_invalid,
         capture_output=True,
     ).stdout.decode()
     
-    output=output.replace('\r','')
-    expected=expected_out_invalid.replace('\r','')
+    output = output.replace('\r', '')
+    expected = expected_out_invalid.replace('\r', '')
     
     assert output.strip() == expected.strip()
-    
+
+  
 def test_login_invalid_email():
+    """
+    Input partition test for input with only 
+    invalid email and valid password
+    """
     
-    user_register('test0@test.com','Aa123456!','testuser')
+    user_register('test0@test.com', 'Aa123456!', 'testuser')
     
     output = subprocess.run(
         ['python', '-m', 'qbnb'],
@@ -52,43 +58,51 @@ def test_login_invalid_email():
         capture_output=True,
     ).stdout.decode()
     
-    output=output.replace('\r','')
-    expected=expected_out_invalid.replace('\r','')
+    output = output.replace('\r', '')
+    expected = expected_out_invalid.replace('\r', '')
 
     assert output.strip() == expected.strip()
     
-    user=User.objects(email='test0@test.com')
+    user = User.objects(email='test0@test.com')
     user[0].delete()
 
-    
+
 def test_login_invalid_password():
-    user_register('test0@test.com','Aa123456!','testuser')
+    """
+    Input partition test for input that has invalid
+    password and valid email
+    """
+    user_register('test0@test.com', 'Aa123456!', 'testuser')
     output = subprocess.run(
         ['python', '-m', 'qbnb'],
         stdin=expected_in_invalid_password,
         capture_output=True,
     ).stdout.decode()
     
-    output=output.replace('\r','')
-    expected=expected_out_invalid.replace('\r','')
+    output = output.replace('\r', '')
+    expected = expected_out_invalid.replace('\r', '')
     
     assert output.strip() == expected.strip()
-    
-    user=User.objects(email='test0@test.com')
+
+    user = User.objects(email='test0@test.com')
     user[0].delete()
-    
+
+
 def test_login_valid():
-    user_register('test0@test.com','Aa123456!','testuser')
+    """
+    Input partition test for valid input.
+    """
+    user_register('test0@test.com', 'Aa123456!', 'testuser')
     output = subprocess.run(
         ['python', '-m', 'qbnb'],
         stdin=expected_in_valid,
         capture_output=True,
     ).stdout.decode()
-    user=User.objects(email='test0@test.com')
+    user = User.objects(email='test0@test.com')
     user[0].delete()
-    output=output.replace('\r','')
-    expected=expected_out_valid.replace('\r','')
-    print(output)
+    output = output.replace('\r', '')
+    expected = expected_out_valid.replace('\r', '')
+
     assert output.strip() == expected.strip()
 
 
