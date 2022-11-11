@@ -29,8 +29,8 @@ def test_r4_1_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_1"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
@@ -71,8 +71,8 @@ def test_r4_2_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_2"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
@@ -115,10 +115,9 @@ def test_r4_3_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_3"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
-    failures = []
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
         expected_out = open(out_file).read()
@@ -159,10 +158,9 @@ def test_r4_4_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_4"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
-    failures = []
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
         expected_out = open(out_file).read()
@@ -204,8 +202,8 @@ def test_r4_5_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_5"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
@@ -246,8 +244,8 @@ def test_r4_8_listing_create():
         user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_8"
-    expected_in_files = [x for x in test_dir.glob("*.in")].sort()
-    expected_out_files = [x for x in test_dir.glob("*.out")].sort()
+    expected_in_files = sorted([x for x in test_dir.glob("*.in")])
+    expected_out_files = sorted([x for x in test_dir.glob("*.out")])
     test_cases = dict(zip(expected_in_files, expected_out_files))
     for in_file, out_file in test_cases.items():
         expected_in = open(in_file)
