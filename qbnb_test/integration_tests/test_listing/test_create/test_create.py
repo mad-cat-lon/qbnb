@@ -25,6 +25,8 @@ def test_r4_1_listing_create():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_1"
     expected_in_files = [x for x in test_dir.glob("*.in")]
@@ -68,6 +70,8 @@ def test_r4_2_listing_create():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_2"
     expected_in_files = [x for x in test_dir.glob("*.in")]
@@ -113,6 +117,8 @@ def test_r4_3_listing_create():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_3"
     expected_in_files = [x for x in test_dir.glob("*.in")]
@@ -137,9 +143,9 @@ def test_r4_3_listing_create():
     models.User.objects(email='r4@test.com', password='A123456a').delete()
 
 
-def test_r4_4_create_listing():
+def test_r4_4_liting_create():
     """
-      partitioning for R4-4
+    Input partitioning for R4-4
     test1 - Invalid description is shorter than title
     test2 - Valid description is equal length to title
     test3 - Valid description is longer than title
@@ -157,6 +163,8 @@ def test_r4_4_create_listing():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_4"
     expected_in_files = [x for x in test_dir.glob("*.in")]
@@ -181,7 +189,7 @@ def test_r4_4_create_listing():
     models.User.objects(email='r4@test.com', password='A123456a').delete()
 
 
-def test_r4_5_create_listing():
+def test_r4_5_listing_create():
     """
     Boundary testing for R4-5
     test1 - Invalid price of 9.99
@@ -202,6 +210,8 @@ def test_r4_5_create_listing():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_5"
     expected_in_files = [x for x in test_dir.glob("*.in")]
@@ -226,7 +236,7 @@ def test_r4_5_create_listing():
     models.User.objects(email='r4@test.com', password='A123456a').delete()
 
 
-def test_r4_8_create_listing():
+def test_r4_8_listing_create():
     """
     Output partitioning for R4-8
     test1 - Valid creation of listing
@@ -245,6 +255,8 @@ def test_r4_8_create_listing():
             balance=100
         )
         user.save()
+    else:
+        user = user[0]
     current_folder = Path(__file__).parent
     test_dir = current_folder / "r4_8"
     expected_in_files = [x for x in test_dir.glob("*.in")]
