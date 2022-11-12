@@ -40,10 +40,13 @@ Testing register function for base valid and invalid cases.
 Valid: Register successful
 Invalid: Register unsuccessful
 """
+
+
 def test_register_output_valid():
     """
     Output Partition
-    Testing output for successful registration"""
+    Testing output for successful registration
+    """
     output = subprocess.run(
         ['python', '-m', 'qbnb'],
         stdin=expected_input_valid,
@@ -72,9 +75,12 @@ def test_register_output_invalid():
 
     assert output.strip() == expected.strip()
 
+
 """ 
 Input Partition Testing
 """
+
+
 def test_r1_3_user_register():
     '''
     Testing R1-3: The email has to follow addr-spec defined in 
@@ -164,6 +170,8 @@ def test_r1_7_user_register():
 """
 Boundary Testing
 """
+
+
 def test_r1_6_user_register():
     '''
     Testing R1-6: User name has to be longer than 2 characters 
