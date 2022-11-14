@@ -180,20 +180,20 @@ class Listing(db.Document):
         and raises a ValidationError if it does not
         '''
         # R4-1
-        valid_title_regex = "^[1-9A-Za-z][1-9A-Za-z ]*[1-9A-Za-z]$"
+        valid_title_regex = "^[0-9A-Za-z][0-9A-Za-z ]*[0-9A-Za-z]$"
         if re.search(valid_title_regex, self.title) is None:
             raise ValidationError(
-                "Name of listing can only contain"
+                "Title of listing can only contain "
                 "alphanumeric characters and spaces")
                              
         # R4-2
         if len(self.title) > 80:
-            raise ValidationError("Name of listing is too long")
+            raise ValidationError("Title of listing is too long")
 
         # R4-3
         if len(self.description) < 20 or len(self.description) > 2000:
             raise ValidationError(
-                "Description must be between 20 to"
+                "Description must be between 20 to "
                 "2000 characters")
 
         # R4-4
@@ -217,7 +217,6 @@ class Listing(db.Document):
        
         # R4-8
         listings = Listing.objects(title=self.title, owner=self.owner.id)
-        print(listings)
         if len(listings) != 0:
             raise ValidationError("Cannot create listing with same title")
                
