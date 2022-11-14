@@ -1,0 +1,13 @@
+Welcome to qbnb!
+ 1. Log in
+ 2. Register
+ 3. Exit
+: Please enter email: Please enter password: Welcome tester!
+========== USER HOME PAGE ==========
+1. Update profile information
+2. Create listing
+3. Update listing
+4. Exit
+Enter choice: 1. test listing
+Please pick which listing you would like to edit: Please enter new title: Please enter new description: Please enter new price: Listing updated.
+Enter choice: 
