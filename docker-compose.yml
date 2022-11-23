@@ -1,0 +1,31 @@
+version: "3"
+services:
+  qbnb-cli:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    image: 2022cisc327group2/qbnb:v1
+    container_name: qbnb-cli
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:  ["./wait-for-it.sh", "mongodb:27017", "--strict" , "--timeout=300", "--", "python", "-m", "qbnb"]
+    depends_on:
+      - mongodb
+    networks:
+      - qbnb-site
+
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - qbnb-site
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:/docker-entrypoint-initdb.d
+
+networks:
+  qbnb-site:

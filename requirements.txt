@@ -2,3 +2,5 @@ Flask==2.2.2
 flask_mongoengine==1.0.0
 mongoengine==0.24.2
 requests==2.25.1
+pytest
+flake8
