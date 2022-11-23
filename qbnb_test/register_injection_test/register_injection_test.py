@@ -21,7 +21,7 @@ def test_register_injection_email():
             user_register(text, "A123456a!", "test0user")
         except Exception as e:
             assert False
-    user = User.objects()
+    user = User.objects(user_name='test0user')
     for i in user:
         i.delete()
     input_file.close()
@@ -39,7 +39,7 @@ def test_register_injection_password():
             user_register('test@test.com', text, "test0user")
         except Exception as e:
             assert False
-    user = User.objects()
+    user = User.objects(user_name='test0user')
     for i in user:
         i.delete()
     input_file.close()
@@ -57,7 +57,7 @@ def test_register_injection_user_name():
             user_register('test@test.com', "A123456!a", text)
         except Exception as e:
             assert False
-    user = User.objects()
+    user = User.objects(password="A123456!a")
     for i in user:
         i.delete()
     input_file.close()
