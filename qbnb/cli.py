@@ -58,6 +58,13 @@ def getBooking(user):
 def create_booking_page(user):
     """
     Creates booking given user input
+    All the available listing will first be printed, then
+    the user will enter the number of a listing,start date,
+    end date to book a listing.
+    
+    Listing booked is printed if succecefull, error message from
+    the exception is printed if operation fail.
+    
     """
     listings = Listing.objects()
     if len(listings) == 0:
