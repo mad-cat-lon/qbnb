@@ -11,7 +11,7 @@ def user_home_page(user):
     Displays user home page
     """
     print(f"{'='*10} USER HOME PAGE {'='*10}")
-    getBooking(user)
+    get_Booking(user)
     print("1. Update profile information\n2. Create listing")
     print("3. Update listing\n4. Create Booking")
     print("5. Exit")
@@ -29,7 +29,7 @@ def user_home_page(user):
             break
 
 
-def getBooking(user):
+def get_Booking(user):
     """
     This function prints all the booking that a user have
     with its title,start date, and end date.
