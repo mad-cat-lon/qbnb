@@ -236,7 +236,7 @@ class Listing(db.Document):
         if self.price > new_booking.guest.balance:
             raise ValidationError(
                 "Cannot book a listing that costs more"
-                "than your balance"
+                " than your balance"
             )
 
         # R6-3

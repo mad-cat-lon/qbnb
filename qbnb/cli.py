@@ -3,6 +3,7 @@ from qbnb.functions import create_listing
 from datetime import datetime
 from qbnb.models import login, update_user, User, Listing
 from qbnb.models import update_listing
+from qbnb.functions import create_booking, Booking
 
 
 def user_home_page(user):
@@ -10,8 +11,10 @@ def user_home_page(user):
     Displays user home page
     """
     print(f"{'='*10} USER HOME PAGE {'='*10}")
+    getBooking(user)
     print("1. Update profile information\n2. Create listing")
-    print("3. Update listing\n4. Exit")
+    print("3. Update listing\n4. Create Booking")
+    print("5. Exit")
     while True:
         choice = input("Enter choice: ")
         if choice == "1":
@@ -21,8 +24,63 @@ def user_home_page(user):
         elif choice == "3":
             listing_update_page(user)
         elif choice == "4":
+            create_booking_page(user)
+        elif choice == "5":
             break
 
+
+def getBooking(user):
+    """
+    This function prints all the booking that a user have
+    with its title,start date, and end date.
+    """
+    listings = Listing.objects()
+    bookedListing = []
+    for listing in listings:
+        for booking in listing.bookings:
+            if booking.guest.email == user.email:
+                # get a booking where the guest is the user
+                bookedListing.append([listing, booking])
+    
+    if len(bookedListing) != 0:
+        print("Your booked Listings")
+        for booking in bookedListing:
+            
+            start = booking[1].start_date.date()
+            
+            end = booking[1].end_date.date()
+            
+            print(booking[0].title)
+            print("Start date:", start, "End date:", end)
+            print()
+            
+                        
+def create_booking_page(user):
+    """
+    Creates booking given user input
+    """
+    listings = Listing.objects()
+    if len(listings) == 0:
+        print("No listing available")
+        return
+    else:
+        print("Open Listings")
+        for i in range(len(listings)):
+            print(i + 1, ":", listings[i].title)
+        userChoice = int(input("Enter the number of a listing to book: "))
+        if userChoice < 1 or userChoice > len(listings):
+            print("Invalid Input")
+            return
+        else:
+            startDate = input("Enter start date: ")
+            endDate = input("Enter end date: ")
+            valid = create_booking(user, startDate, 
+                                   endDate, listings[userChoice - 1])
+        if valid:
+            print("Listing booked")
+            
+        return
+    
 
 def create_listing_page(user):
     """
