@@ -3,6 +3,7 @@ from mongoengine import *
 from flask_mongoengine import BaseQuerySet
 from flask_mongoengine import MongoEngine
 from mongoengine import Document
+from mongoengine import EmbeddedDocument
 from mongoengine import ReferenceField
 from mongoengine import BooleanField
 from mongoengine import DateTimeField
@@ -10,32 +11,11 @@ from mongoengine import StringField
 from mongoengine import FloatField
 from mongoengine import IntField
 from mongoengine import ValidationError
-from mongoengine import ListField
+from mongoengine import EmbeddedDocumentListField
 import re
 import datetime
 from qbnb import app
 db = MongoEngine(app)
-
-"""
-Base Booking class
-user_id: id of the user booking the place
-listing_id: id of the listing being booked
-price: Price of listing
-date: Date of the booking
-"""
-
-
-class Booking(Document):
-    user_id = IntField(required=True)
-    listing_id = IntField(required=True)
-    price = FloatField(required=True)
-    date = IntField(required=True)
-    meta = {"queryset_class": BaseQuerySet}
-
-    # String representation of booking
-    def __repr__(self):
-        return f"booking_start: {self.booking_start} \
-            booking_end: {self.booking_end}"
 
 
 """
@@ -56,7 +36,7 @@ class User(db.Document):
     billing_address = StringField()
     postal_code = StringField()
     balance = FloatField()
-   
+
     def __repr__(self):
         return f"username: {self.user_name} email: {self.email}"
 
@@ -151,17 +131,37 @@ class Transaction(db.Document):
 
 
 """
+Base Booking class as an EmbeddedDocument (no collection created)
+owner: ReferenceField(User) containing owner of the listing
+guest: ReferenceField(User) containing guest
+start_date: DateTimeField() containing start date of booking
+end_date: DateTimeField() containing end date of booking
+parent_listing: ReferenceField(Listing) containing the parent listing
+"""
+
+
+class Booking(db.EmbeddedDocument):
+    guest = ReferenceField(User)
+    start_date = DateTimeField()
+    end_date = DateTimeField()
+    meta = {"queryset_class": BaseQuerySet, "allow_inheritance": True}
+
+    def __repr__(self, str):
+        return (
+            f"guest: {self.guest.user_name} " +
+            f"{self.start_date}-{self.end_date}"
+        )
+
+
+"""
 Base Listing class
-title: Name of the listing
-images: Array of embedded images
-price: Price of the listing
-host: User object representing the host
-reviews: Array of Review objects
-booked: Boolean value representing if the listing
-        is booked
-requested_bookings: Array of requested Booking
-        objects
-current_booking: the current booking
+title: StringField containing title of listing
+description: StringField containing description
+price: FloatField containing price
+last_modified_date: DateTimeField for last time this listing was modified
+owner: ReferenceField(User) containing owner of listing
+bookings: EmbeddedDocumentListField(Booking) containing all bookings
+          for this listing
 """
 
 
@@ -172,6 +172,7 @@ class Listing(db.Document):
     last_modified_date = DateTimeField()
     owner_id = IntField()
     owner = ReferenceField(User)
+    bookings = EmbeddedDocumentListField(Booking)
     meta = {"queryset_class": BaseQuerySet}
 
     def check(self):
@@ -185,7 +186,7 @@ class Listing(db.Document):
             raise ValidationError(
                 "Title of listing can only contain "
                 "alphanumeric characters and spaces")
-                             
+             
         # R4-2
         if len(self.title) > 80:
             raise ValidationError("Title of listing is too long")
@@ -199,7 +200,7 @@ class Listing(db.Document):
         # R4-4
         if len(self.description) < len(self.title):
             raise ValidationError("Description must be longer than title")
-       
+
         # R4-5
         if self.price < 10 or self.price > 10000:
             raise ValidationError("Price must be between 10 and 10000")
@@ -214,12 +215,57 @@ class Listing(db.Document):
         # R4-7
         if self.owner is None:
             raise ValidationError("Cannot create listing without owner")
-       
+
         # R4-8
         listings = Listing.objects(title=self.title, owner=self.owner.id)
         if len(listings) != 0:
             raise ValidationError("Cannot create listing with same title")
-               
+
+    def check_booking(self, new_booking):
+        '''
+        Checks a user created Booking object to see if it conforms to
+        requirements and raises a ValidationError if it does not
+        '''
+        # R6-1
+        # A user cannot book their own listing
+        if self.owner == new_booking.guest:
+            raise ValidationError("Cannot book a listing you own")
+
+        # R6-2
+        # A user cannot book a listing they cannot afford
+        if self.price > new_booking.guest.balance:
+            raise ValidationError(
+                "Cannot book a listing that costs more"
+                "than your balance"
+            )
+
+        # R6-3
+        # A user cannot book a listing that is already booked on those dates
+        for booking in self.bookings:
+            new_start_date = datetime.datetime.strptime(
+                new_booking.start_date,
+                "%Y-%m-%d"
+            )
+            new_end_date = datetime.datetime.strptime(
+                new_booking.end_date,
+                "%Y-%m-%d"
+            )
+            latest_start_date = max(
+                new_start_date,
+                booking.start_date
+            )
+            earliest_end_date = min(
+                new_end_date,
+                booking.end_date
+            )
+            delta = (earliest_end_date - latest_start_date).days + 1
+            overlap = max(0, delta)
+            if overlap != 0:
+                raise ValidationError(
+                    "Cannot book a listing with "
+                    "overlapping date ranges"
+                )
+
     # String representation of Listing
     def __repr__(self):
         return f"title: {self.title} price: {self.price}"
