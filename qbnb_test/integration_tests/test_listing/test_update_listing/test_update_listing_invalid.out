@@ -7,7 +7,8 @@ Welcome to qbnb!
 1. Update profile information
 2. Create listing
 3. Update listing
-4. Exit
+4. Create Booking
+5. Exit
 Enter choice: 1. test listing
 Please pick which listing you would like to edit: Please enter new title: Please enter new description: Please enter new price: Could not update listing
 Enter choice: 

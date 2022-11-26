@@ -1,6 +1,7 @@
 from os import popen
 from pathlib import Path
 import subprocess
+from qbnb.models import User
 
 # get expected input/output file
 current_folder = Path(__file__).parent
@@ -57,6 +58,9 @@ def test_register_output_valid():
     expected = expected_output_valid.replace('\r', '')
 
     assert output.strip() == expected.strip()
+    users = User.objects()
+    for user in users:
+        user.delete()
 
 
 def test_register_output_invalid():
@@ -72,7 +76,9 @@ def test_register_output_invalid():
 
     output = output.replace('\r', '')
     expected = expected_output_invalid_password.replace('\r', '')
-
+    users = User.objects()
+    for user in users:
+        user.delete()
     assert output.strip() == expected.strip()
 
 
@@ -100,7 +106,9 @@ def test_r1_3_user_register():
 
     output = output.replace('\r', '')
     expected = expected_output_3.replace('\r', '')
-
+    users = User.objects()
+    for user in users:
+        user.delete()
     assert output.strip() == expected.strip()
 
 
@@ -125,6 +133,9 @@ def test_r1_4_user_register():
     expected = expected_output_4.replace('\r', '')
 
     assert output.strip() == expected.strip()
+    users = User.objects()
+    for user in users:
+        user.delete()
 
 
 def test_r1_5_user_register():
@@ -147,6 +158,9 @@ def test_r1_5_user_register():
     expected = expected_output_5.replace('\r', '')
 
     assert output.strip() == expected.strip()
+    users = User.objects()
+    for user in users:
+        user.delete()
 
 
 def test_r1_7_user_register():
@@ -165,6 +179,9 @@ def test_r1_7_user_register():
     expected = expected_output_7.replace('\r', '')
 
     assert output.strip() == expected.strip()
+    users = User.objects()
+    for user in users:
+        user.delete()
 
 
 """
@@ -191,3 +208,6 @@ def test_r1_6_user_register():
     expected = expected_output_6.replace('\r', '')
 
     assert output.strip() == expected.strip()
+    users = User.objects()
+    for user in users:
+        user.delete()
