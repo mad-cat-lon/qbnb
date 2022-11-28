@@ -8,6 +8,9 @@ from qbnb import app
 from qbnb.models import update_listing, Listing
 import datetime
 
+"""
+Backend Requirements Testing (Refer to backendRequirements.md)
+"""
 
 def test_r1_1_user_register():
     '''
