@@ -8,6 +8,10 @@ from qbnb import app
 from qbnb.models import update_listing, Listing
 import datetime
 
+"""
+Backend Requirements Testing (Refer to backendRequirements.md)
+"""
+
 
 def test_r1_1_user_register():
     '''
@@ -663,3 +667,109 @@ def test_r5_4_update_listing():
     assert invalid_result_2 is False
     assert listing.title == 'Beverly Hills Mansion'
     listing.delete()
+
+
+def test_r6_1_book_listing():
+    '''
+    Testing R6-1 in booking listing
+    Requirement: users can book a listing
+    '''
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='user', postal_code='',
+                billing_address='', balance=5000)
+    user.save()
+    owner = User(email='owner@test.com', password='A123456a',
+                 user_name='owner', postal_code='',
+                 billing_address='', balance=10000)
+    owner.save()
+    listing = Listing(title='Beverly Hills Inn',
+                      description='Luxury suite with sea view.',
+                      price=2000,
+                      last_modified_date="2022-03-09",
+                      owner=owner)
+    listing.save()
+    result = create_booking(user, '2022-03-09', '2022-03-10', listing)
+    assert result is True
+    listing.delete()
+    owner.delete()
+    user.delete()
+
+
+def test_r6_2_book_listing():
+    '''
+    Testing R6-2 in booking listing
+    Requirement: users cannot book a listing for his/her listing
+    '''
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='user', postal_code='',
+                billing_address='', balance=5000)
+    user.save()
+    listing = Listing(title='Beverly Hills Inn',
+                      description='Luxury suite with sea view.',
+                      price=2000, last_modified_date="2022-03-09", owner=user)
+    listing.save()
+    invalid_owner = create_booking(user, '2022-03-09', '2022-03-10', listing)
+    assert invalid_owner is False
+    listing.delete()
+    user.delete()
+
+
+def test_r6_3_book_listing():
+    '''
+    Testing R6-3 in booking listing
+    Requirement: users cannot book a listing that costs
+                 more than his/her balance.
+    '''
+    user = User(email='test0@test.com', password='A123456a',
+                user_name='user', postal_code='',
+                billing_address='', balance=100)
+    user.save()
+    owner = User(email='owner@test.com', password='A123456a',
+                 user_name='owner', postal_code='',
+                 billing_address='', balance=10000)
+    owner.save()
+    listing = Listing(title='Beverly Hills Inn',
+                      description='Luxury suite with sea view.',
+                      price=2000,
+                      last_modified_date="2022-03-09",
+                      owner=owner)
+    listing.save()
+    result = create_booking(user, '2022-03-09', '2022-03-10', listing)
+    assert result is False
+    listing.delete()
+    user.delete()
+    owner.delete()
+
+
+def test_r6_4_book_listing():
+    '''
+    Testing R6-4 in booking listing
+    Requirement: users cannot book a listing that is already booked
+                 with the overlapped dates.
+    '''
+    user1 = User(email='user1@test.com', password='A123456a',
+                 user_name='user1', postal_code='',
+                 billing_address='', balance=5000)
+    user1.save()
+    user2 = User(email='user2@test.com', password='A123456a',
+                 user_name='user2', postal_code='',
+                 billing_address='', balance=5000)
+    user2.save()
+    owner = User(email='owner@test.com', password='A123456a',
+                 user_name='owner', postal_code='',
+                 billing_address='', balance=10000)
+    owner.save()
+    listing = Listing(title='Beverly Hills Inn',
+                      description='Luxury suite with sea view.',
+                      price=2000,
+                      last_modified_date="2022-03-09",
+                      owner=owner)
+    listing.save()
+    attempt1 = create_booking(user1, '2022-03-09', '2022-03-15', listing)
+    attempt2 = create_booking(user2, '2022-03-10', '2022-03-20', listing)
+    assert attempt1 is True
+    assert attempt2 is False
+    listing.delete()
+    user1.delete()
+    user2.delete()
+    owner.delete()
