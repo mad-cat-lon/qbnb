@@ -57,6 +57,8 @@ def create_booking(guest, start_date, end_date, listing):
         User.objects(id=listing.owner.id).update_one(
             inc__balance=listing.price
         )
+        guest.balance -= listing.price
+        guest.reload()
         return True
     except ValidationError as e:
         print(e.message)
