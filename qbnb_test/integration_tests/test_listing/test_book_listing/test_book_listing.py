@@ -137,3 +137,9 @@ def test_book_balance_invalid():
 
     assert output.strip() == expected.strip()
 
+    listing = Listing.objects(title="TestListing1")
+    listing[0].delete()
+    owner = User.objects(email="owner@gmail.com")
+    owner[0].delete()
+    renter = User.objects(email="renter@gmail.com")
+    renter[0].delete()
