@@ -1,0 +1,15 @@
+Welcome to qbnb!
+ 1. Log in
+ 2. Register
+ 3. Exit
+: Please enter email: Please enter password: Welcome owner!
+========== USER HOME PAGE ==========
+1. Update profile information
+2. Create listing
+3. Update listing
+4. Create Booking
+5. Exit
+Enter choice: Open Listings
+1 : TestListing1
+Enter the number of a listing to book: Enter start date: Enter end date: Cannot book a listing you own
+Enter choice: 
